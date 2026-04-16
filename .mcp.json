@@ -4,7 +4,7 @@
       "command": "npx",
       "args": ["-y", "firecrawl-mcp-server"],
       "env": {
-        "FIRECRAWL_API_KEY": "tu-api-key-aqui"
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
       }
     }
   }
