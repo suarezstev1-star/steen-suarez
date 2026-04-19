@@ -110,7 +110,7 @@ export default function Markdown({ content }) {
           return (
             <ul key={b.key}>
               {b.items.map((it, j) => (
-                <li key={j}>{renderInline(it)}</li>
+                <li key={`${b.key}-item-${j}`}>{renderInline(it)}</li>
               ))}
             </ul>
           );

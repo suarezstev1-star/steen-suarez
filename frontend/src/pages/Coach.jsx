@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -18,32 +18,30 @@ export default function Coach() {
   const [newTitle, setNewTitle] = useState("");
   const scrollRef = useRef(null);
 
-  useEffect(() => {
-    loadSessions();
+  const loadSessions = useCallback(async () => {
+    const res = await api.get("/coach/sessions");
+    setSessions(res.data);
+    setActiveSession((curr) => curr || res.data[0] || null);
+  }, []);
+
+  const loadMessages = useCallback(async (sessionId) => {
+    const res = await api.get(`/coach/sessions/${sessionId}/messages`);
+    setMessages(res.data);
   }, []);
 
   useEffect(() => {
+    loadSessions();
+  }, [loadSessions]);
+
+  useEffect(() => {
     if (activeSession) loadMessages(activeSession.id);
-  }, [activeSession]);
+  }, [activeSession, loadMessages]);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
-
-  const loadSessions = async () => {
-    const res = await api.get("/coach/sessions");
-    setSessions(res.data);
-    if (res.data.length && !activeSession) {
-      setActiveSession(res.data[0]);
-    }
-  };
-
-  const loadMessages = async (sessionId) => {
-    const res = await api.get(`/coach/sessions/${sessionId}/messages`);
-    setMessages(res.data);
-  };
 
   const createSession = async () => {
     try {

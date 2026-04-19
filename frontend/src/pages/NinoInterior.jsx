@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
@@ -12,10 +12,15 @@ export default function NinoInterior() {
   const [reflection, setReflection] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const loadLogs = useCallback(async () => {
+    const r = await api.get("/inner-child/logs");
+    setLogs(r.data);
+  }, []);
+
   useEffect(() => {
     api.get("/inner-child/exercises").then((r) => setExercises(r.data.exercises));
-    api.get("/inner-child/logs").then((r) => setLogs(r.data));
-  }, []);
+    loadLogs();
+  }, [loadLogs]);
 
   const saveReflection = async () => {
     if (!activeExercise || !reflection.trim()) return;
@@ -28,8 +33,7 @@ export default function NinoInterior() {
       toast.success("Práctica registrada. Tu niño/a interior te lo agradece.");
       setReflection("");
       setActiveExercise(null);
-      const r = await api.get("/inner-child/logs");
-      setLogs(r.data);
+      await loadLogs();
     } catch (e) {
       toast.error("Error al guardar");
     } finally {
@@ -107,7 +111,7 @@ export default function NinoInterior() {
             <p className="label-upper mb-4">Pasos</p>
             <ol className="space-y-3">
               {activeExercise.steps.map((step, i) => (
-                <li key={i} className="flex gap-4">
+                <li key={`${activeExercise.id}-step-${i}`} className="flex gap-4">
                   <span className="shrink-0 w-8 h-8 rounded-full bg-forest text-bone font-heading font-bold text-sm flex items-center justify-center">
                     {i + 1}
                   </span>

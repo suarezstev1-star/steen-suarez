@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -16,14 +16,14 @@ export default function Diario() {
   const [lessons, setLessons] = useState(["", "", ""]);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    load();
-  }, []);
-
-  const load = async () => {
+  const load = useCallback(async () => {
     const res = await api.get("/journal");
     setEntries(res.data);
-  };
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const save = async () => {
     if (!content.trim()) return;
@@ -201,7 +201,7 @@ function ProtocolList({ label, icon: Icon, color, values, setValues, placeholder
       <div className="space-y-2">
         {values.map((v, i) => (
           <Input
-            key={i}
+            key={`${testid}-slot-${i}`}
             value={v}
             onChange={(e) => {
               const copy = [...values];
@@ -227,7 +227,7 @@ function PreviewBlock({ icon: Icon, color, label, items }) {
       </div>
       <ul className="space-y-1">
         {items.map((it, i) => (
-          <li key={i} className="text-sm font-body text-forest-light leading-snug">
+          <li key={`${label}-${i}-${it.slice(0, 20)}`} className="text-sm font-body text-forest-light leading-snug">
             · {it}
           </li>
         ))}

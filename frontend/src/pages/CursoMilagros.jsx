@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { api } from "../lib/api";
 import { Loader2, BookOpen, Sparkles } from "lucide-react";
@@ -18,12 +18,13 @@ export default function CursoMilagros() {
 
   useEffect(() => {
     api.get("/lessons").then((r) => setLessons(r.data));
-    if (!selectedDay) {
-      api.get("/lessons/today").then((r) => {
-        setSelectedDay(r.data.day);
-      });
-    }
   }, []);
+
+  useEffect(() => {
+    if (!selectedDay) {
+      api.get("/lessons/today").then((r) => setSelectedDay(r.data.day));
+    }
+  }, [selectedDay]);
 
   useEffect(() => {
     if (!selectedDay) return;
@@ -32,7 +33,7 @@ export default function CursoMilagros() {
     setInsight(null);
   }, [selectedDay, lessons]);
 
-  const generateInsight = async () => {
+  const generateInsight = useCallback(async () => {
     if (!selectedDay) return;
     setLoadingInsight(true);
     try {
@@ -44,7 +45,7 @@ export default function CursoMilagros() {
     } finally {
       setLoadingInsight(false);
     }
-  };
+  }, [selectedDay]);
 
   return (
     <div className="p-6 md:p-10 max-w-7xl" data-testid="curso-page">

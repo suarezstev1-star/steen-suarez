@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -31,14 +31,14 @@ export default function Planner() {
   const [newActivity, setNewActivity] = useState("");
   const [newCategory, setNewCategory] = useState("general");
 
-  useEffect(() => {
-    load();
-  }, [selectedDate]);
-
-  const load = async () => {
+  const load = useCallback(async () => {
     const res = await api.get(`/planner?date_str=${selectedDate}`);
     setBlocks(res.data);
-  };
+  }, [selectedDate]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const addBlock = async () => {
     if (!newActivity.trim()) return;

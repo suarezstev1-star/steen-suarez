@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { api } from "../lib/api";
 
 const AuthContext = createContext(null);
@@ -23,22 +23,23 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = async (password) => {
+  const login = useCallback(async (password) => {
     const res = await api.post("/auth/login", { password });
     localStorage.setItem("milagros_token", res.data.token);
     setAuthed(true);
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("milagros_token");
     setAuthed(false);
-  };
+  }, []);
 
-  return (
-    <AuthContext.Provider value={{ authed, loading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({ authed, loading, login, logout }),
+    [authed, loading, login, logout]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => useContext(AuthContext);

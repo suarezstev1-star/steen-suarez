@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import {
@@ -23,6 +23,18 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+const CHART_Y_DOMAIN = [0, 10];
+const CHART_TOOLTIP_STYLE = {
+  backgroundColor: "#FFFFFF",
+  border: "1px solid #E6DFD3",
+  borderRadius: "0.75rem",
+  fontFamily: "IBM Plex Sans",
+};
+const CHART_LEGEND_STYLE = { fontFamily: "IBM Plex Sans", fontSize: 12 };
+const CHART_DOT_MOOD = { fill: "#C25934", r: 3 };
+const CHART_DOT_ENERGY = { fill: "#2C5A3F", r: 3 };
+const CHART_DOT_STAB = { fill: "#7BA4A8", r: 3 };
+
 export default function Dashboard() {
   const [metrics, setMetrics] = useState(null);
   const [todayLesson, setTodayLesson] = useState(null);
@@ -36,6 +48,17 @@ export default function Dashboard() {
     ]).finally(() => setLoading(false));
   }, []);
 
+  const chartData = useMemo(
+    () =>
+      (metrics?.emotions.series_14d || []).map((d) => ({
+        date: d.date.slice(5),
+        Ánimo: d.mood,
+        Energía: d.energy,
+        Estabilidad: d.stability,
+      })),
+    [metrics]
+  );
+
   if (loading || !metrics) {
     return (
       <div className="min-h-screen flex items-center justify-center" data-testid="dashboard-loading">
@@ -43,13 +66,6 @@ export default function Dashboard() {
       </div>
     );
   }
-
-  const chartData = metrics.emotions.series_14d.map((d) => ({
-    date: d.date.slice(5),
-    Ánimo: d.mood,
-    Energía: d.energy,
-    Estabilidad: d.stability,
-  }));
 
   return (
     <div className="p-6 md:p-10 max-w-7xl" data-testid="dashboard">
@@ -167,26 +183,19 @@ export default function Dashboard() {
                 fontFamily="IBM Plex Sans"
               />
               <YAxis
-                domain={[0, 10]}
+                domain={CHART_Y_DOMAIN}
                 stroke="#4A5D52"
                 fontSize={11}
                 fontFamily="IBM Plex Sans"
               />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#FFFFFF",
-                  border: "1px solid #E6DFD3",
-                  borderRadius: "0.75rem",
-                  fontFamily: "IBM Plex Sans",
-                }}
-              />
-              <Legend wrapperStyle={{ fontFamily: "IBM Plex Sans", fontSize: 12 }} />
+              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
+              <Legend wrapperStyle={CHART_LEGEND_STYLE} />
               <Line
                 type="monotone"
                 dataKey="Ánimo"
                 stroke="#C25934"
                 strokeWidth={2.5}
-                dot={{ fill: "#C25934", r: 3 }}
+                dot={CHART_DOT_MOOD}
                 connectNulls
               />
               <Line
@@ -194,7 +203,7 @@ export default function Dashboard() {
                 dataKey="Energía"
                 stroke="#2C5A3F"
                 strokeWidth={2.5}
-                dot={{ fill: "#2C5A3F", r: 3 }}
+                dot={CHART_DOT_ENERGY}
                 connectNulls
               />
               <Line
@@ -202,7 +211,7 @@ export default function Dashboard() {
                 dataKey="Estabilidad"
                 stroke="#7BA4A8"
                 strokeWidth={2.5}
-                dot={{ fill: "#7BA4A8", r: 3 }}
+                dot={CHART_DOT_STAB}
                 connectNulls
               />
             </LineChart>

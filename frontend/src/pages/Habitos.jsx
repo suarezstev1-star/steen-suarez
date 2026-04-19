@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -11,18 +11,18 @@ export default function Habitos() {
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState("");
 
-  useEffect(() => {
-    load();
-  }, []);
-
-  const load = async () => {
+  const load = useCallback(async () => {
     const [hs, wk] = await Promise.all([
       api.get("/habits"),
       api.get("/habits/checkins/week"),
     ]);
     setHabits(hs.data);
     setWeek(wk.data);
-  };
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const addHabit = async () => {
     if (!newName.trim()) return;

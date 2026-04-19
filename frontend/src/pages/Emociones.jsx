@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "../lib/api";
 import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
@@ -16,6 +16,13 @@ import {
 } from "recharts";
 import { toast } from "sonner";
 
+const CHART_Y_DOMAIN = [0, 10];
+const CHART_TOOLTIP_STYLE = {
+  backgroundColor: "#FFFFFF",
+  border: "1px solid #E6DFD3",
+  borderRadius: "0.75rem",
+};
+
 export default function Emociones() {
   const [mood, setMood] = useState([7]);
   const [energy, setEnergy] = useState([7]);
@@ -24,14 +31,14 @@ export default function Emociones() {
   const [history, setHistory] = useState([]);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    load();
-  }, []);
-
-  const load = async () => {
+  const load = useCallback(async () => {
     const res = await api.get("/emotions?days=30");
     setHistory(res.data);
-  };
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const submit = async () => {
     setSaving(true);
@@ -52,12 +59,16 @@ export default function Emociones() {
     }
   };
 
-  const chartData = history.map((h) => ({
-    date: h.date.slice(5),
-    Ánimo: h.mood,
-    Energía: h.energy,
-    Estabilidad: h.stability,
-  }));
+  const chartData = useMemo(
+    () =>
+      history.map((h) => ({
+        date: h.date.slice(5),
+        Ánimo: h.mood,
+        Energía: h.energy,
+        Estabilidad: h.stability,
+      })),
+    [history]
+  );
 
   return (
     <div className="p-6 md:p-10 max-w-6xl" data-testid="emociones-page">
@@ -155,14 +166,8 @@ export default function Emociones() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E6DFD3" />
                   <XAxis dataKey="date" stroke="#4A5D52" fontSize={11} />
-                  <YAxis domain={[0, 10]} stroke="#4A5D52" fontSize={11} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#FFFFFF",
-                      border: "1px solid #E6DFD3",
-                      borderRadius: "0.75rem",
-                    }}
-                  />
+                  <YAxis domain={CHART_Y_DOMAIN} stroke="#4A5D52" fontSize={11} />
+                  <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
                   <Legend />
                   <Area
                     type="monotone"

@@ -13,6 +13,16 @@ import Diario from "./pages/Diario";
 import Habitos from "./pages/Habitos";
 import Emociones from "./pages/Emociones";
 
+const TOASTER_OPTIONS = {
+  style: {
+    background: "#FFFFFF",
+    border: "1px solid #E6DFD3",
+    color: "#1A3626",
+    fontFamily: "IBM Plex Sans",
+    borderRadius: "1rem",
+  },
+};
+
 function ProtectedRoute({ children }) {
   const { authed, loading } = useAuth();
   if (loading) {
@@ -31,18 +41,7 @@ function App() {
     <div className="App">
       <AuthProvider>
         <BrowserRouter>
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              style: {
-                background: "#FFFFFF",
-                border: "1px solid #E6DFD3",
-                color: "#1A3626",
-                fontFamily: "IBM Plex Sans",
-                borderRadius: "1rem",
-              },
-            }}
-          />
+          <Toaster position="top-right" toastOptions={TOASTER_OPTIONS} />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
