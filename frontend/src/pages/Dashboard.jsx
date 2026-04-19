@@ -22,6 +22,7 @@ import {
   Baby,
   ArrowRight,
 } from "lucide-react";
+import TodayCard from "../components/TodayCard";
 
 const CHART_Y_DOMAIN = [0, 10];
 const CHART_TOOLTIP_STYLE = {
@@ -98,11 +99,16 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Guía del día — protagonista */}
+      <div className="mb-6">
+        <TodayCard />
+      </div>
+
       {/* Bento grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {/* Lección del día - span 2 */}
         <div
-          className="tactile-card p-8 md:col-span-2 lg:col-span-2 md:row-span-2 cursor-pointer group"
+          className="tactile-card p-8 md:col-span-2 lg:col-span-2 cursor-pointer group"
           onClick={() => navigate(`/curso?day=${todayLesson?.day}`)}
           data-testid="today-lesson-card"
         >
@@ -110,15 +116,11 @@ export default function Dashboard() {
             <p className="label-upper">Lección {todayLesson?.day} · Hoy</p>
             <BookOpen className="w-5 h-5 text-terracotta" strokeWidth={1.5} />
           </div>
-          <h2 className="font-heading font-bold text-2xl md:text-3xl text-forest mt-6 leading-snug tracking-tight">
+          <h2 className="font-heading font-bold text-xl md:text-2xl text-forest mt-4 leading-snug tracking-tight">
             "{todayLesson?.title}"
           </h2>
-          <p className="text-forest-light font-body mt-6 leading-relaxed">
-            Tu coach decodificará esta lección con ejemplos reales, PNL y
-            sabiduría bíblica para un salto cuántico hoy.
-          </p>
           <button
-            className="mt-8 inline-flex items-center gap-2 text-terracotta font-label font-semibold text-sm tracking-wide group-hover:gap-3 transition-all"
+            className="mt-5 inline-flex items-center gap-2 text-terracotta font-label font-semibold text-sm tracking-wide group-hover:gap-3 transition-all"
             data-testid="open-lesson-btn"
           >
             Abrir lección del día

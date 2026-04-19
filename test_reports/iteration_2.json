@@ -1,0 +1,42 @@
+{
+  "summary": "Backend E2E testing for new Journey (Ruta de Transformación) system + regression of iteration_1 endpoints. Added 14 journey tests to /app/backend/tests/backend_test.py. Results: 29/29 existing tests still pass; 13/14 journey tests pass. Only failure (test_04_intake_submit) was caused by a transient upstream LLM 502 BadGateway during the automated run — re-run manually via curl succeeded in 117s and produced a perfectly structured profile + 4-phase roadmap. All subsequent tests (profile, roadmap, today+cache, complete, progress, advance-phase, review, coach-uses-context, reset) passed on the seeded state.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/journey/intake/submit", "issue": "Transient upstream 502 BadGateway from LLM provider occurred on 2/2 automated attempts (but succeeded on manual curl). The endpoint surfaces the upstream error as HTTP 500 with raw litellm text. Consider: (a) automatic server-side retry (1-2x with small backoff) to smooth over transient 502s; (b) map upstream 502 to HTTP 503 with friendly message so frontend can retry gracefully."},
+      {"endpoint": "/api/journey/today", "issue": "When profile/roadmap exist but current_phase_started_at is missing, falls back silently to today() — works but masks data integrity issues. Minor. Also first-of-day request may take 20-40s; frontend should show loading state."},
+      {"endpoint": "/api/journey/review", "issue": "Always persists the review even if content is short/error-echo; consider minimum length check before insert."},
+      {"endpoint": "/api/journey/progress", "issue": "days_completed counts ALL journey_daily entries with completed=true across all phases historically; if used across multiple phases this inflates % against the current-phase denominator. Not breaking, but semantics worth aligning (per-phase vs cumulative)."}
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml",
+    "/app/test_reports/pytest/pytest_journey2.xml"
+  ],
+  "action_items": [
+    "Add a retry wrapper around LlmChat.send_message in intake_submit / journey_today / journey_review to handle transient upstream 502s gracefully (1-2 retries with 2-3s backoff).",
+    "Consider splitting server.py (now 1106 lines) into routers: auth.py, lessons.py, coach.py, journey.py, habits.py, metrics.py.",
+    "Clarify progress semantics: should days_completed be scoped to current phase? Currently it's global across all phases."
+  ],
+  "critical_code_review_comments": [
+    "server.py ballooned from 695 → 1106 lines with the journey module. Strongly recommend modularization into /app/backend/routers/ before adding more features.",
+    "intake_submit, journey_today and journey_review each build their own LlmChat instance and have no retry logic — a single upstream hiccup bricks the whole intake flow for the user with a scary 500 error.",
+    "journey_today has duplicated/dead code around phase_start parsing (lines 883 and 886 both compute the same thing, first line is unreachable side-effect).",
+    "_build_coach_system_message runs 3 mongo queries every coach turn. For chatty sessions this is fine but cache per-session for the first N turns could save ms.",
+    "No validation that phases array returned by LLM has exactly 4 items or that numbers are 1-4 sequential. If the LLM returns 3 or 5, the roadmap is stored as-is and downstream (advance-phase, today) will behave oddly. Add pydantic validation + regeneration on failure.",
+    "DELETE /api/journey/reset wipes journey_daily and journey_reviews globally (no per-user scoping). Fine for this single-user app but flag if multi-user is ever added.",
+    "suggested_ucdm_lesson / suggested_inner_child_id come from LLM and are not validated (could be a random string or out-of-range int). Add server-side validation before persisting."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py"
+  ],
+  "success_rate": {"backend": "97% (42/43; 1 failure = transient upstream 502, verified working manually)", "frontend": "N/A (not requested)"},
+  "test_credentials": "App password: milagros2026 (from /app/memory/test_credentials.md) — verified working.",
+  "seed_data_creation": "Test creates a real journey profile + roadmap via Claude during test_04, uses it through tests 05-13, then cleans up in test_14 via DELETE /api/journey/reset. All coach/habit/journal entries prefixed with TEST_ and deleted inline.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend journey flow is fully functional. The ONLY flaky test is test_04_intake_submit (triggers a 60-120s Claude call); if it fails with 502 just re-run: `REACT_APP_BACKEND_URL=http://localhost:8001 pytest backend/tests/backend_test.py::TestJourney -v`. Run only post-intake tests (05-14) after manual intake if transient errors persist. ALWAYS test against http://localhost:8001 — preview URL may timeout at ingress for long AI requests (intake can take 60-120s). pytest_results.xml = full suite run; pytest_journey2.xml = journey-only successful run.",
+  "rca of the issue": "test_04 failures: `litellm.BadGatewayError: OpenAIException - Error code: 502` from upstream Anthropic-via-Emergent proxy. Reproducible: call /api/journey/intake/submit during provider instability. Mitigation: add server-side retry in intake_submit (see action item #1). Not a code bug — a reliability/UX improvement."
+}

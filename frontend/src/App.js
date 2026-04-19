@@ -12,6 +12,8 @@ import Planner from "./pages/Planner";
 import Diario from "./pages/Diario";
 import Habitos from "./pages/Habitos";
 import Emociones from "./pages/Emociones";
+import Diagnostico from "./pages/Diagnostico";
+import Ruta from "./pages/Ruta";
 
 const TOASTER_OPTIONS = {
   style: {
@@ -44,6 +46,8 @@ function App() {
           <Toaster position="top-right" toastOptions={TOASTER_OPTIONS} />
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/diagnostico" element={<ProtectedRoute><Diagnostico /></ProtectedRoute>} />
+            <Route path="/ruta" element={<ProtectedRoute><Ruta /></ProtectedRoute>} />
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/curso" element={<ProtectedRoute><CursoMilagros /></ProtectedRoute>} />
             <Route path="/coach" element={<ProtectedRoute><Coach /></ProtectedRoute>} />

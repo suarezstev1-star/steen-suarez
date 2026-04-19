@@ -347,3 +347,206 @@ class TestMetrics:
             assert k in m["growth"]
         assert 1 <= m["day_of_year"] <= 366
         assert 0 <= m["year_progress"] <= 100
+
+
+# ---------- Journey (Ruta de Transformación) ----------
+# Full end-to-end: reset -> status -> questions -> submit intake (AI) ->
+# profile/roadmap -> today (AI, cache) -> complete -> advance -> review (AI) -> reset
+class TestJourney:
+    intake_answers = [
+        {"id": "q1", "answer": "Me siento estancado, con una sensación de tener mucho por dar pero sin dirección clara."},
+        {"id": "q2", "answer": "La ansiedad financiera y sentir que no avanzo en mi carrera."},
+        {"id": "q3", "answer": "Empiezo proyectos con entusiasmo y los abandono cuando se ponen difíciles."},
+        {"id": "q4", "answer": "Seguridad emocional y reconocimiento real de mis padres."},
+        {"id": "q5", "answer": "Viviendo con libertad financiera, liderando un proyecto propio y en pareja sana."},
+        {"id": "q6", "answer": "Creo en el fondo que no soy suficiente para lograr algo grande."},
+        {"id": "q7", "answer": "Mi capacidad de conectar con las personas y mi creatividad."},
+        {"id": "q8", "answer": "Busco paz interior y propósito; siento que hay algo más grande esperándome."},
+    ]
+
+    def test_01_reset_clean_state(self, auth_headers):
+        r = requests.delete(f"{API}/journey/reset", headers=auth_headers, timeout=20)
+        assert r.status_code == 200
+        assert r.json().get("ok") is True
+
+    def test_02_status_empty(self, auth_headers):
+        r = requests.get(f"{API}/journey/status", headers=auth_headers, timeout=15)
+        assert r.status_code == 200
+        s = r.json()
+        assert s["has_profile"] is False
+        assert s["has_roadmap"] is False
+        assert s["current_phase"] is None
+
+    def test_03_intake_questions(self, auth_headers):
+        r = requests.get(f"{API}/journey/intake/questions", headers=auth_headers, timeout=15)
+        assert r.status_code == 200
+        qs = r.json()["questions"]
+        assert isinstance(qs, list) and len(qs) == 8
+        for q in qs:
+            for k in ("id", "category", "question", "hint"):
+                assert k in q and isinstance(q[k], str) and len(q[k]) > 0
+
+    def test_04_intake_submit_generates_profile_and_roadmap(self, auth_headers):
+        # Retry up to 2 times — upstream LLM may return transient 502
+        last = None
+        for attempt in range(2):
+            r = requests.post(
+                f"{API}/journey/intake/submit",
+                json={"answers": self.intake_answers},
+                headers=auth_headers,
+                timeout=240,
+            )
+            last = r
+            if r.status_code == 200:
+                break
+            time.sleep(3)
+        r = last
+        assert r.status_code == 200, f"intake submit failed: {r.text[:500]}"
+        data = r.json()
+
+        prof = data["profile"]
+        for k in ("diagnosis", "core_patterns", "root_wound", "core_need", "superpower", "north_star"):
+            assert k in prof, f"profile missing {k}"
+            assert prof[k], f"profile {k} empty"
+        assert isinstance(prof["core_patterns"], list) and len(prof["core_patterns"]) >= 1
+
+        rm = data["roadmap"]
+        assert rm["current_phase"] == 1
+        phases = rm["phases"]
+        assert isinstance(phases, list) and len(phases) == 4
+        for i, p in enumerate(phases, start=1):
+            assert p["number"] == i
+            assert isinstance(p["title"], str) and p["title"]
+            assert isinstance(p["duration_days"], int) and p["duration_days"] > 0
+            assert isinstance(p["focus"], str) and p["focus"]
+            assert isinstance(p["key_ucdm_lessons"], list) and all(isinstance(x, int) for x in p["key_ucdm_lessons"])
+            assert isinstance(p["key_inner_child"], list)
+            assert all(isinstance(x, str) and x.startswith("ic-") for x in p["key_inner_child"])
+            assert isinstance(p["pnl_techniques"], list)
+            assert isinstance(p["daily_core_practice"], str) and p["daily_core_practice"]
+            assert isinstance(p["milestone"], str) and p["milestone"]
+
+    def test_05_status_after_intake(self, auth_headers):
+        r = requests.get(f"{API}/journey/status", headers=auth_headers, timeout=15)
+        assert r.status_code == 200
+        s = r.json()
+        assert s["has_profile"] is True
+        assert s["has_roadmap"] is True
+        assert s["current_phase"] == 1
+
+    def test_06_get_profile(self, auth_headers):
+        r = requests.get(f"{API}/journey/profile", headers=auth_headers, timeout=15)
+        assert r.status_code == 200
+        p = r.json()
+        assert p["id"] == "owner"
+        assert p["diagnosis"]
+        assert isinstance(p["core_patterns"], list) and p["core_patterns"]
+
+    def test_07_get_roadmap(self, auth_headers):
+        r = requests.get(f"{API}/journey/roadmap", headers=auth_headers, timeout=15)
+        assert r.status_code == 200
+        rm = r.json()
+        assert rm["current_phase"] == 1
+        assert len(rm["phases"]) == 4
+
+    def test_08_today_generates_and_caches(self, auth_headers):
+        t0 = time.time()
+        r1 = requests.get(f"{API}/journey/today", headers=auth_headers, timeout=90)
+        t1 = time.time() - t0
+        assert r1.status_code == 200, r1.text[:400]
+        g1 = r1.json()
+        for k in ("action_title", "action_description", "why_today",
+                  "estimated_minutes", "completion_criteria", "phase_number", "day_in_phase"):
+            assert k in g1
+        assert g1["action_title"] and g1["action_description"] and g1["why_today"]
+        assert isinstance(g1["estimated_minutes"], int)
+        # suggested_ucdm_lesson: null or int 1-365
+        sl = g1.get("suggested_ucdm_lesson")
+        assert sl is None or (isinstance(sl, int) and 1 <= sl <= 365)
+        sic = g1.get("suggested_inner_child_id")
+        assert sic is None or (isinstance(sic, str) and sic.startswith("ic-"))
+
+        # Second call must be cached (fast, identical)
+        t2 = time.time()
+        r2 = requests.get(f"{API}/journey/today", headers=auth_headers, timeout=20)
+        t3 = time.time() - t2
+        assert r2.status_code == 200
+        assert r2.json()["action_title"] == g1["action_title"]
+        assert t3 < 5, f"today not cached (cached call took {t3:.1f}s, first {t1:.1f}s)"
+
+    def test_09_complete_today(self, auth_headers):
+        r = requests.post(f"{API}/journey/today/complete", headers=auth_headers, timeout=15)
+        assert r.status_code == 200
+        assert r.json().get("ok") is True
+
+    def test_10_progress(self, auth_headers):
+        r = requests.get(f"{API}/journey/progress", headers=auth_headers, timeout=15)
+        assert r.status_code == 200
+        p = r.json()
+        assert p["has_roadmap"] is True
+        assert p["current_phase"] == 1
+        assert p["total_phases"] == 4
+        assert p["days_completed"] >= 1
+        assert 0 <= p["completion_percent"] <= 100
+
+    def test_11_advance_phase(self, auth_headers):
+        r = requests.post(f"{API}/journey/advance-phase", headers=auth_headers, timeout=15)
+        assert r.status_code == 200
+        assert r.json()["current_phase"] == 2
+        # status reflects
+        r2 = requests.get(f"{API}/journey/status", headers=auth_headers, timeout=15)
+        assert r2.json()["current_phase"] == 2
+
+    def test_12_review_generates(self, auth_headers):
+        r = requests.post(f"{API}/journey/review", headers=auth_headers, timeout=120)
+        assert r.status_code == 200, r.text[:400]
+        rv = r.json()
+        assert rv["id"] and rv["date"] and rv["content"]
+        assert len(rv["content"]) > 200
+
+        r2 = requests.get(f"{API}/journey/reviews", headers=auth_headers, timeout=15)
+        assert r2.status_code == 200
+        ids = [x["id"] for x in r2.json()]
+        assert rv["id"] in ids
+
+    def test_13_coach_uses_journey_context(self, auth_headers):
+        """Create a session AFTER profile exists — coach should have contextual knowledge."""
+        r = requests.post(
+            f"{API}/coach/sessions",
+            json={"title": "TEST_post_intake"},
+            headers=auth_headers, timeout=30,
+        )
+        assert r.status_code == 200
+        sid = r.json()["id"]
+
+        # Ask about "mi patrón" — should reference the actual profile, not generic
+        r = requests.post(
+            f"{API}/coach/message",
+            json={"session_id": sid, "content": "Recuérdame cuál es mi patrón principal y mi norte."},
+            headers=auth_headers, timeout=120,
+        )
+        assert r.status_code == 200
+        content = r.json()["content"].lower()
+        # Should mention at least one of: patron-related keyword or concrete project/financial anchor
+        context_markers = ["patrón", "patron", "abandon", "proyecto", "financ", "norte",
+                           "libertad", "pareja", "suficient", "reconocimiento"]
+        hits = sum(1 for m in context_markers if m in content)
+        assert hits >= 2, f"coach response seems generic (hits={hits}): {content[:400]}"
+
+        # Cleanup session
+        requests.delete(f"{API}/coach/sessions/{sid}", headers=auth_headers, timeout=15)
+
+    def test_14_reset_clears_all(self, auth_headers):
+        r = requests.delete(f"{API}/journey/reset", headers=auth_headers, timeout=20)
+        assert r.status_code == 200
+
+        # profile -> 404
+        r = requests.get(f"{API}/journey/profile", headers=auth_headers, timeout=15)
+        assert r.status_code == 404
+        # roadmap -> 404
+        r = requests.get(f"{API}/journey/roadmap", headers=auth_headers, timeout=15)
+        assert r.status_code == 404
+        # status -> empty
+        r = requests.get(f"{API}/journey/status", headers=auth_headers, timeout=15)
+        s = r.json()
+        assert s["has_profile"] is False and s["has_roadmap"] is False

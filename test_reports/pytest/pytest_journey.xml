@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="0" tests="14" time="383.874" timestamp="2026-04-19T17:22:26.014965+00:00" hostname="agent-env-6c47926d-c4b9-4abc-93bd-277fbea4343c"><testcase classname="backend.tests.backend_test.TestJourney" name="test_01_reset_clean_state" time="0.017" /><testcase classname="backend.tests.backend_test.TestJourney" name="test_02_status_empty" time="0.004" /><testcase classname="backend.tests.backend_test.TestJourney" name="test_03_intake_questions" time="0.002" /><testcase classname="backend.tests.backend_test.TestJourney" name="test_04_intake_submit_generates_profile_and_roadmap" time="368.670"><failure message="AssertionError: intake submit failed: {&quot;detail&quot;:&quot;Error IA: Failed to generate chat completion: litellm.BadGatewayError: BadGatewayError: OpenAIException - Error code: 502&quot;}&#10;assert 500 == 200&#10; +  where 500 = &lt;Response [500]&gt;.status_code">backend/tests/backend_test.py:404: in test_04_intake_submit_generates_profile_and_roadmap
+    assert r.status_code == 200, f"intake submit failed: {r.text[:500]}"
+E   AssertionError: intake submit failed: {"detail":"Error IA: Failed to generate chat completion: litellm.BadGatewayError: BadGatewayError: OpenAIException - Error code: 502"}
+E   assert 500 == 200
+E    +  where 500 = &lt;Response [500]&gt;.status_code</failure></testcase><testcase classname="backend.tests.backend_test.TestJourney" name="test_05_status_after_intake" time="0.004"><failure message="assert False is True">backend/tests/backend_test.py:433: in test_05_status_after_intake
+    assert s["has_profile"] is True
+E   assert False is True</failure></testcase><testcase classname="backend.tests.backend_test.TestJourney" name="test_06_get_profile" time="0.004"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">backend/tests/backend_test.py:439: in test_06_get_profile
+    assert r.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="backend.tests.backend_test.TestJourney" name="test_07_get_roadmap" time="0.004"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">backend/tests/backend_test.py:447: in test_07_get_roadmap
+    assert r.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="backend.tests.backend_test.TestJourney" name="test_08_today_generates_and_caches" time="0.004"><failure message="AssertionError: {&quot;detail&quot;:&quot;Completa el diagnóstico primero&quot;}&#10;assert 400 == 200&#10; +  where 400 = &lt;Response [400]&gt;.status_code">backend/tests/backend_test.py:456: in test_08_today_generates_and_caches
+    assert r1.status_code == 200, r1.text[:400]
+E   AssertionError: {"detail":"Completa el diagnóstico primero"}
+E   assert 400 == 200
+E    +  where 400 = &lt;Response [400]&gt;.status_code</failure></testcase><testcase classname="backend.tests.backend_test.TestJourney" name="test_09_complete_today" time="0.003"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">backend/tests/backend_test.py:479: in test_09_complete_today
+    assert r.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="backend.tests.backend_test.TestJourney" name="test_10_progress" time="0.003"><failure message="assert False is True">backend/tests/backend_test.py:486: in test_10_progress
+    assert p["has_roadmap"] is True
+E   assert False is True</failure></testcase><testcase classname="backend.tests.backend_test.TestJourney" name="test_11_advance_phase" time="0.003"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">backend/tests/backend_test.py:494: in test_11_advance_phase
+    assert r.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="backend.tests.backend_test.TestJourney" name="test_12_review_generates" time="0.004"><failure message="AssertionError: {&quot;detail&quot;:&quot;Completa el diagnóstico primero&quot;}&#10;assert 400 == 200&#10; +  where 400 = &lt;Response [400]&gt;.status_code">backend/tests/backend_test.py:502: in test_12_review_generates
+    assert r.status_code == 200, r.text[:400]
+E   AssertionError: {"detail":"Completa el diagnóstico primero"}
+E   assert 400 == 200
+E    +  where 400 = &lt;Response [400]&gt;.status_code</failure></testcase><testcase classname="backend.tests.backend_test.TestJourney" name="test_13_coach_uses_journey_context" time="14.907" /><testcase classname="backend.tests.backend_test.TestJourney" name="test_14_reset_clears_all" time="0.008" /></testsuite></testsuites>

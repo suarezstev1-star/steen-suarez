@@ -15,7 +15,17 @@ import jwt
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 from course_data import get_lesson, get_all_lessons
-from prompts import COACH_SYSTEM_PROMPT, LESSON_INSIGHT_PROMPT_TEMPLATE, INNER_CHILD_EXERCISES
+from prompts import (
+    COACH_SYSTEM_PROMPT,
+    LESSON_INSIGHT_PROMPT_TEMPLATE,
+    INNER_CHILD_EXERCISES,
+    INTAKE_QUESTIONS,
+    ROADMAP_GENERATION_PROMPT,
+    DAILY_GUIDANCE_PROMPT,
+    PROGRESS_REVIEW_PROMPT,
+)
+import json as _json
+import re as _re
 
 
 ROOT_DIR = Path(__file__).parent
@@ -144,6 +154,77 @@ async def lesson_insight(day: int, user: str = Depends(verify_token)):
     return LessonInsight(**insight_doc)
 
 
+# ============ COACH CONTEXT HELPER ============
+async def _build_coach_system_message() -> str:
+    """Construye el system message del coach con el contexto actual del usuario."""
+    base = COACH_SYSTEM_PROMPT
+    parts = [base]
+
+    profile = await db.journey_profile.find_one({"id": "owner"}, {"_id": 0})
+    if profile:
+        parts.append(f"""
+
+=== CONTEXTO DEL CLIENTE (conócelo, no lo repitas literal) ===
+DIAGNÓSTICO: {profile.get('diagnosis', '')}
+PATRONES: {', '.join(profile.get('core_patterns', []))}
+HERIDA RAÍZ: {profile.get('root_wound', '')}
+NECESIDAD NÚCLEO: {profile.get('core_need', '')}
+SUPERPODER: {profile.get('superpower', '')}
+NORTE: {profile.get('north_star', '')}""")
+
+    roadmap = await db.journey_roadmap.find_one({"id": "owner"}, {"_id": 0})
+    if roadmap:
+        current_phase_num = roadmap.get("current_phase", 1)
+        phases = roadmap.get("phases", [])
+        current_phase = next((p for p in phases if p["number"] == current_phase_num), None)
+        if current_phase:
+            parts.append(f"""
+FASE ACTUAL: #{current_phase['number']} "{current_phase['title']}"
+Enfoque: {current_phase['focus']}
+Práctica nuclear diaria: {current_phase['daily_core_practice']}""")
+
+    # Últimas emociones (3 días)
+    three_days_ago = (date.today() - timedelta(days=3)).isoformat()
+    recent_emotions = await db.emotions.find(
+        {"date": {"$gte": three_days_ago}}, {"_id": 0}
+    ).sort("created_at", -1).to_list(10)
+    if recent_emotions:
+        em_summary = " | ".join(
+            f"{e['date']}: ánimo {e['mood']}, energía {e['energy']}, estabilidad {e['stability']}"
+            for e in recent_emotions[:5]
+        )
+        parts.append(f"\nESTADO EMOCIONAL RECIENTE: {em_summary}")
+
+    parts.append("\n=== FIN CONTEXTO ===\n")
+    return "\n".join(parts)
+
+
+def _extract_json(text: str) -> dict:
+    """Extrae JSON de una respuesta de LLM, tolerante a texto extra o bloques ```."""
+    # Intenta directo
+    try:
+        return _json.loads(text)
+    except Exception:
+        pass
+    # Intenta buscar JSON entre ``` o entre {}
+    m = _re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, _re.DOTALL)
+    if m:
+        try:
+            return _json.loads(m.group(1))
+        except Exception:
+            pass
+    # Busca el primer { balanceado hasta el último }
+    start = text.find("{")
+    end = text.rfind("}")
+    if start >= 0 and end > start:
+        candidate = text[start : end + 1]
+        try:
+            return _json.loads(candidate)
+        except Exception:
+            pass
+    raise ValueError("No se pudo extraer JSON válido de la respuesta del modelo")
+
+
 # ============ COACH (Chat conversacional) ============
 class CoachSession(BaseModel):
     id: str
@@ -201,7 +282,7 @@ Sé cálido, profundo y directo. Sin rodeos."""
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=sid,
-            system_message=COACH_SYSTEM_PROMPT,
+            system_message=await _build_coach_system_message(),
         ).with_model("anthropic", "claude-sonnet-4-5-20250929")
 
         try:
@@ -266,10 +347,8 @@ async def send_coach_message(req: SendMessageRequest, user: str = Depends(verify
     chat = LlmChat(
         api_key=EMERGENT_LLM_KEY,
         session_id=req.session_id,
-        system_message=COACH_SYSTEM_PROMPT,
+        system_message=await _build_coach_system_message(),
     ).with_model("anthropic", "claude-sonnet-4-5-20250929")
-
-    # Replay history para reconstruir el contexto (todos menos el último user message que acabamos de guardar)
     context_block = ""
     prev_msgs = history_msgs[:-1]  # todos menos el actual
     if prev_msgs:
@@ -664,6 +743,338 @@ async def metrics_dashboard(user: str = Depends(verify_token)):
         "day_of_year": today.timetuple().tm_yday,
         "year_progress": round((today.timetuple().tm_yday / 365) * 100),
     }
+
+
+# ============ JOURNEY (Ruta de Transformación guiada por IA) ============
+
+class IntakeAnswer(BaseModel):
+    id: str
+    answer: str
+
+
+class IntakeSubmit(BaseModel):
+    answers: List[IntakeAnswer]
+
+
+@api_router.get("/journey/intake/questions")
+async def intake_questions(user: str = Depends(verify_token)):
+    return {"questions": INTAKE_QUESTIONS}
+
+
+@api_router.get("/journey/status")
+async def journey_status(user: str = Depends(verify_token)):
+    profile = await db.journey_profile.find_one({"id": "owner"}, {"_id": 0})
+    roadmap = await db.journey_roadmap.find_one({"id": "owner"}, {"_id": 0})
+    return {
+        "has_profile": bool(profile),
+        "has_roadmap": bool(roadmap),
+        "current_phase": roadmap.get("current_phase", 1) if roadmap else None,
+    }
+
+
+@api_router.post("/journey/intake/submit")
+async def intake_submit(req: IntakeSubmit, user: str = Depends(verify_token)):
+    """Procesa intake, genera perfil + ruta con IA. Puede tardar 30-60s."""
+    answers_by_id = {a.id: a.answer for a in req.answers}
+    answers_block = ""
+    for q in INTAKE_QUESTIONS:
+        ans = answers_by_id.get(q["id"], "(sin respuesta)")
+        answers_block += f"\n[{q['category']}] {q['question']}\n→ {ans}\n"
+
+    prompt = ROADMAP_GENERATION_PROMPT.format(answers_block=answers_block)
+
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=f"intake-{uuid.uuid4()}",
+        system_message="Eres un coach maestro transformacional. Respondes en español y siempre en JSON válido cuando se te pide.",
+    ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+
+    try:
+        response = await chat.send_message(UserMessage(text=prompt))
+        data = _extract_json(response)
+    except Exception as e:
+        logging.exception("Error generando roadmap")
+        raise HTTPException(status_code=500, detail=f"Error IA: {str(e)}")
+
+    profile = data.get("profile", {})
+    phases = data.get("phases", [])
+    now = datetime.now(timezone.utc).isoformat()
+
+    profile_doc = {
+        "id": "owner",
+        "diagnosis": profile.get("diagnosis", ""),
+        "core_patterns": profile.get("core_patterns", []),
+        "root_wound": profile.get("root_wound", ""),
+        "core_need": profile.get("core_need", ""),
+        "superpower": profile.get("superpower", ""),
+        "north_star": profile.get("north_star", ""),
+        "intake_answers": [a.model_dump() for a in req.answers],
+        "created_at": now,
+    }
+    await db.journey_profile.delete_many({"id": "owner"})
+    await db.journey_profile.insert_one(dict(profile_doc))
+
+    roadmap_doc = {
+        "id": "owner",
+        "phases": phases,
+        "current_phase": 1,
+        "current_phase_started_at": date.today().isoformat(),
+        "started_at": date.today().isoformat(),
+        "created_at": now,
+    }
+    await db.journey_roadmap.delete_many({"id": "owner"})
+    await db.journey_roadmap.insert_one(dict(roadmap_doc))
+
+    return {"profile": profile_doc, "roadmap": roadmap_doc}
+
+
+@api_router.get("/journey/profile")
+async def get_profile(user: str = Depends(verify_token)):
+    profile = await db.journey_profile.find_one({"id": "owner"}, {"_id": 0})
+    if not profile:
+        raise HTTPException(status_code=404, detail="Perfil no creado aún")
+    return profile
+
+
+@api_router.get("/journey/roadmap")
+async def get_roadmap(user: str = Depends(verify_token)):
+    roadmap = await db.journey_roadmap.find_one({"id": "owner"}, {"_id": 0})
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Ruta no creada aún")
+    return roadmap
+
+
+@api_router.post("/journey/advance-phase")
+async def advance_phase(user: str = Depends(verify_token)):
+    roadmap = await db.journey_roadmap.find_one({"id": "owner"}, {"_id": 0})
+    if not roadmap:
+        raise HTTPException(status_code=404, detail="Ruta no creada")
+    current = roadmap.get("current_phase", 1)
+    max_phase = len(roadmap.get("phases", []))
+    new_phase = min(current + 1, max_phase)
+    await db.journey_roadmap.update_one(
+        {"id": "owner"},
+        {"$set": {
+            "current_phase": new_phase,
+            "current_phase_started_at": date.today().isoformat(),
+        }},
+    )
+    return {"current_phase": new_phase}
+
+
+@api_router.get("/journey/today")
+async def journey_today(user: str = Depends(verify_token)):
+    """Guía del día. Se cachea por fecha."""
+    today = date.today().isoformat()
+    cached = await db.journey_daily.find_one({"date": today}, {"_id": 0})
+    if cached:
+        return cached
+
+    profile = await db.journey_profile.find_one({"id": "owner"}, {"_id": 0})
+    roadmap = await db.journey_roadmap.find_one({"id": "owner"}, {"_id": 0})
+    if not profile or not roadmap:
+        raise HTTPException(status_code=400, detail="Completa el diagnóstico primero")
+
+    current_phase_num = roadmap.get("current_phase", 1)
+    phase = next(
+        (p for p in roadmap["phases"] if p["number"] == current_phase_num),
+        roadmap["phases"][0],
+    )
+    phase_start = datetime.fromisoformat(roadmap.get("current_phase_started_at", today)).date() if "T" not in roadmap.get("current_phase_started_at", today) else datetime.fromisoformat(roadmap["current_phase_started_at"]).date()
+    # Simplified: use ISO date directly
+    try:
+        phase_start = date.fromisoformat(roadmap.get("current_phase_started_at", today))
+    except Exception:
+        phase_start = date.today()
+    day_in_phase = (date.today() - phase_start).days + 1
+
+    # Emociones recientes
+    start = (date.today() - timedelta(days=3)).isoformat()
+    recent_em = await db.emotions.find(
+        {"date": {"$gte": start}}, {"_id": 0}
+    ).sort("created_at", -1).to_list(5)
+    em_str = " | ".join(
+        f"{e['date']}: á{e['mood']} e{e['energy']} s{e['stability']}"
+        for e in recent_em
+    ) or "Sin registros recientes"
+
+    # Hábitos
+    habits = await db.habits.find({}, {"_id": 0}).to_list(20)
+    habits_str = ", ".join(h["name"] for h in habits) or "Ninguno aún"
+
+    prompt = DAILY_GUIDANCE_PROMPT.format(
+        profile=_json.dumps(
+            {k: profile.get(k) for k in ["diagnosis", "core_patterns", "core_need", "north_star"]},
+            ensure_ascii=False,
+        ),
+        day_in_phase=day_in_phase,
+        total_days=phase.get("duration_days", 21),
+        phase=_json.dumps(
+            {k: phase.get(k) for k in ["number", "title", "focus", "daily_core_practice"]},
+            ensure_ascii=False,
+        ),
+        recent_emotions=em_str,
+        habits=habits_str,
+    )
+
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=f"daily-{today}",
+        system_message="Eres un coach maestro. Respondes siempre en español y en JSON válido.",
+    ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+
+    try:
+        response = await chat.send_message(UserMessage(text=prompt))
+        data = _extract_json(response)
+    except Exception as e:
+        logging.exception("Error guía diaria")
+        raise HTTPException(status_code=500, detail=f"Error IA: {str(e)}")
+
+    guidance_doc = {
+        "date": today,
+        "phase_number": phase["number"],
+        "phase_title": phase["title"],
+        "day_in_phase": day_in_phase,
+        "action_title": data.get("action_title", ""),
+        "action_description": data.get("action_description", ""),
+        "why_today": data.get("why_today", ""),
+        "suggested_ucdm_lesson": data.get("suggested_ucdm_lesson"),
+        "suggested_inner_child_id": data.get("suggested_inner_child_id"),
+        "estimated_minutes": data.get("estimated_minutes", 15),
+        "completion_criteria": data.get("completion_criteria", ""),
+        "completed": False,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.journey_daily.insert_one(dict(guidance_doc))
+    return guidance_doc
+
+
+@api_router.post("/journey/today/complete")
+async def complete_today(user: str = Depends(verify_token)):
+    today = date.today().isoformat()
+    res = await db.journey_daily.update_one(
+        {"date": today},
+        {"$set": {"completed": True, "completed_at": datetime.now(timezone.utc).isoformat()}},
+    )
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="No hay guía de hoy")
+    return {"ok": True}
+
+
+@api_router.get("/journey/progress")
+async def journey_progress(user: str = Depends(verify_token)):
+    """Estadísticas de progreso en la ruta."""
+    roadmap = await db.journey_roadmap.find_one({"id": "owner"}, {"_id": 0})
+    if not roadmap:
+        return {"has_roadmap": False}
+
+    # Días completados
+    completed = await db.journey_daily.count_documents({"completed": True})
+    total_days = await db.journey_daily.count_documents({})
+    total_planned = sum(p.get("duration_days", 21) for p in roadmap.get("phases", []))
+
+    try:
+        started = date.fromisoformat(roadmap.get("started_at", date.today().isoformat()))
+    except Exception:
+        started = date.today()
+    days_since_start = (date.today() - started).days + 1
+
+    return {
+        "has_roadmap": True,
+        "current_phase": roadmap.get("current_phase", 1),
+        "total_phases": len(roadmap.get("phases", [])),
+        "days_completed": completed,
+        "days_logged": total_days,
+        "days_since_start": days_since_start,
+        "total_planned_days": total_planned,
+        "completion_percent": round((completed / total_planned) * 100) if total_planned else 0,
+    }
+
+
+class ProgressReviewRequest(BaseModel):
+    pass
+
+
+@api_router.post("/journey/review")
+async def journey_review(user: str = Depends(verify_token)):
+    """Revisión semanal por IA."""
+    profile = await db.journey_profile.find_one({"id": "owner"}, {"_id": 0})
+    roadmap = await db.journey_roadmap.find_one({"id": "owner"}, {"_id": 0})
+    if not profile or not roadmap:
+        raise HTTPException(status_code=400, detail="Completa el diagnóstico primero")
+
+    current_phase = next(
+        (p for p in roadmap["phases"] if p["number"] == roadmap.get("current_phase", 1)),
+        roadmap["phases"][0],
+    )
+
+    week_start = (date.today() - timedelta(days=7)).isoformat()
+    emotions = await db.emotions.find(
+        {"date": {"$gte": week_start}}, {"_id": 0}
+    ).to_list(50)
+    journal = await db.journal.find(
+        {"date": {"$gte": week_start}}, {"_id": 0}
+    ).to_list(30)
+    coach_count = await db.coach_sessions.count_documents({
+        "created_at": {"$gte": f"{week_start}T00:00:00"}
+    })
+    completed_days = await db.journey_daily.count_documents({"completed": True})
+
+    prompt = PROGRESS_REVIEW_PROMPT.format(
+        profile=_json.dumps(
+            {k: profile.get(k) for k in ["diagnosis", "core_patterns", "core_need", "north_star"]},
+            ensure_ascii=False,
+        ),
+        phase=_json.dumps(current_phase, ensure_ascii=False),
+        completed_days=completed_days,
+        total_days=current_phase.get("duration_days", 21),
+        emotions=_json.dumps(
+            [{"date": e["date"], "m": e["mood"], "e": e["energy"], "s": e["stability"]} for e in emotions],
+            ensure_ascii=False,
+        ),
+        journal=_json.dumps(
+            [{"date": j["date"], "title": j["title"], "content": j["content"][:200]} for j in journal],
+            ensure_ascii=False,
+        ),
+        coach_count=coach_count,
+    )
+
+    chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id=f"review-{date.today().isoformat()}",
+        system_message=COACH_SYSTEM_PROMPT,
+    ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+
+    try:
+        response = await chat.send_message(UserMessage(text=prompt))
+    except Exception as e:
+        logging.exception("Error review")
+        raise HTTPException(status_code=500, detail=f"Error IA: {str(e)}")
+
+    review_doc = {
+        "id": str(uuid.uuid4()),
+        "date": date.today().isoformat(),
+        "content": response,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.journey_reviews.insert_one(dict(review_doc))
+    return review_doc
+
+
+@api_router.get("/journey/reviews")
+async def list_reviews(user: str = Depends(verify_token)):
+    items = await db.journey_reviews.find({}, {"_id": 0}).sort("created_at", -1).to_list(50)
+    return items
+
+
+@api_router.delete("/journey/reset")
+async def reset_journey(user: str = Depends(verify_token)):
+    """Reinicia el diagnóstico y la ruta (útil para empezar de nuevo)."""
+    await db.journey_profile.delete_many({"id": "owner"})
+    await db.journey_roadmap.delete_many({"id": "owner"})
+    await db.journey_daily.delete_many({})
+    await db.journey_reviews.delete_many({})
+    return {"ok": True}
 
 
 # ============ HEALTH ============

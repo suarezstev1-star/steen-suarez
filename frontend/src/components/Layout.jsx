@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
+  Compass,
   BookOpen,
   MessageCircleHeart,
   Baby,
@@ -14,6 +15,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, testid: "nav-dashboard" },
+  { to: "/ruta", label: "Mi Ruta", icon: Compass, testid: "nav-ruta" },
   { to: "/curso", label: "Curso de Milagros", icon: BookOpen, testid: "nav-curso" },
   { to: "/coach", label: "Coach IA", icon: MessageCircleHeart, testid: "nav-coach" },
   { to: "/nino-interior", label: "Niño Interior", icon: Baby, testid: "nav-nino-interior" },
