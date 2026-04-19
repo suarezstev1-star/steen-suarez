@@ -1,0 +1,120 @@
+{
+  "theme_and_archetype": {
+    "domain": "Health, Wellness, Spiritual & Personal Growth",
+    "theme": "light",
+    "archetype": "1 (Organic & Earthy)",
+    "rationale": "Users embarking on inner child healing and a spiritual journey (Course in Miracles) require a safe, calming, and deeply grounded environment. However, to support Tony Robbins-style NLP coaching and 'quantum leaps', the design uses structured, high-contrast dashboard bento grids. It is a harmonious blend of profound spiritual safety and elite performance tracking."
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Manrope",
+      "body": "IBM Plex Sans",
+      "decorative_labels": "Outfit"
+    },
+    "rules": {
+      "h1": "text-4xl sm:text-5xl tracking-tighter font-extrabold text-[#1A3626]",
+      "h2": "text-2xl sm:text-3xl tracking-tight font-bold text-[#1A3626]",
+      "h3": "text-xl font-semibold text-[#2C5A3F]",
+      "body": "text-base leading-relaxed text-[#4A5D52]",
+      "labels": "text-xs tracking-[0.2em] uppercase font-bold text-[#C25934]"
+    },
+    "forbidden_fonts": [
+      "Inter (for headings)",
+      "Roboto",
+      "Space Grotesk"
+    ]
+  },
+  "colors": {
+    "background": {
+      "base": "#F9F6F0",
+      "surface": "#FFFFFF",
+      "surface_alt": "#E6DFD3"
+    },
+    "primary": {
+      "main": "#1A3626",
+      "light": "#2C5A3F",
+      "dark": "#0D1B13"
+    },
+    "accent": {
+      "terracotta": "#C25934",
+      "sand": "#D4C5B0",
+      "sky": "#7BA4A8"
+    },
+    "text": {
+      "primary": "#1A3626",
+      "secondary": "#4A5D52",
+      "muted": "#8A9A90"
+    },
+    "rules": {
+      "contrast": "All text must pass APCA contrast checks. Primary CTA buttons use Deep Forest Green (#1A3626) with Bone White text. 'Quantum Leap' alerts/metrics use Terracotta.",
+      "forbidden_colors": [
+        "#1B93A4",
+        "#9D4CDD",
+        "pure white for app background (use #F9F6F0 instead)"
+      ]
+    }
+  },
+  "spacing_and_layout": {
+    "system": "Generous Spacing Philosophy. Use 2-3x more spacing. Minimum inner padding for cards is p-6 or p-8.",
+    "grids": {
+      "dashboard": "Control Room Grid with a Bento twist. grid-cols-1 md:grid-cols-3 lg:grid-cols-4 with gap-6. Mix spanning items: summary metrics (col-span-1), primary growth chart (col-span-2 row-span-2), daily lesson feed (col-span-1 row-span-2).",
+      "marketing_hero": "Tetris Grid for any landing/promo areas."
+    },
+    "border_radius": "rounded-2xl for main cards, rounded-full for buttons and badges. Inner child elements should feel soft and tactile."
+  },
+  "surface_strategies": {
+    "cards": "Neumorphism (Tactile) variant: Background matches parent or slightly lighter. Soft, warm ambient shadows (shadow-[0_8px_30px_rgba(26,54,38,0.04)]) with a crisp 1px border (border-[#E6DFD3]) to ground them.",
+    "header": "Solid Bone White (#F9F6F0) with a subtle bottom border or Glassmorphism (backdrop-blur-xl bg-[#F9F6F0]/80) if content scrolls beneath.",
+    "charts": "Cardless or completely integrated into the bento grid with minimal borders. No heavy box-shadows on charts."
+  },
+  "motion_and_interactions": {
+    "hover": "-translate-y-1 transition-transform duration-300 ease-out, shadow-lg, and explicit hover text/bg colors.",
+    "transitions": "Use specific properties (transition-colors, transition-transform) not 'all'.",
+    "progress_bars": "Must have a 'spring' animation to visualize 'quantum leaps'."
+  },
+  "components": {
+    "shadcn_customizations": {
+      "buttons": "rounded-full, font-bold tracking-wide. Primary button uses bg-[#1A3626] hover:bg-[#2C5A3F] text-white.",
+      "cards": "Remove default Shadcn border/shadow. Use custom tactile neumorphism (border-[#E6DFD3], shadow-sm, generous p-8 padding).",
+      "calendar": "Custom styled to fit the '365 lessons' format. Hide standard borders, emphasize the current day with a Terracotta circle.",
+      "tabs": "Override standard Vercel look. Use soft pill-shaped indicators."
+    },
+    "icons": {
+      "library": "@phosphor-icons/react",
+      "style": "Duotone or Regular weight. Must feel organic."
+    }
+  },
+  "media": {
+    "image_urls": [
+      {
+        "category": "hero_background",
+        "url": "https://images.pexels.com/photos/6789297/pexels-photo-6789297.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Warm sunlit sand dunes. Use as a subtle, low-opacity background for the dashboard or login screen."
+      },
+      {
+        "category": "meditation_healing",
+        "url": "https://images.pexels.com/photos/13865894/pexels-photo-13865894.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Serene woman meditating in a garden. Use for the 'Inner Child Healing' or 'Course in Miracles' section banner."
+      },
+      {
+        "category": "journal_productivity",
+        "url": "https://images.pexels.com/photos/7582013/pexels-photo-7582013.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Sunlit journal on a desk. Use for the 'Reflection Journal' or 'Hour-by-Hour Planner' section."
+      }
+    ],
+    "rules": "Max opacity for text overlays is bg-black/40 (if dark) or bg-[#F9F6F0]/60 (if light). Do not hide the organic warmth of the images."
+  },
+  "testing": {
+    "rules": "All interactive elements (habit checkboxes, daily lesson buttons, emotional state toggles) MUST include data-testid attributes in kebab-case based on role."
+  },
+  "instructions_to_main_agent": [
+    "Install fonts via Google Fonts: Manrope, IBM Plex Sans, Outfit.",
+    "Install @phosphor-icons/react, recharts, framer-motion, date-fns.",
+    "Configure Tailwind with the exact color hexes provided in the 'colors' section. Map these to logical names: primary (#1A3626), background (#F9F6F0), accent-terracotta (#C25934), etc.",
+    "Build the dashboard using a CSS Grid (Bento style). The layout should visually separate 'Spiritual/Inner Child' elements (softer, pastel sky blue/sand) from 'Productivity/NLP metrics' (sharp, data-driven, terracotta).",
+    "The 365 days Course in Miracles calendar should be a prominent, easily scannable widget. Build a custom view for it, do not just use standard datepicker.",
+    "Implement Shadcn UI, but strip out the default gray/tech look. Replace borders with border-[#E6DFD3] and backgrounds with white or #F9F6F0.",
+    "Data-testid is mandatory for all core interactions.",
+    "Include recharts for the 'Saltos Cuánticos' (Quantum Leaps) transformation dashboard. Focus on clear, comparable metrics."
+  ]
+}
