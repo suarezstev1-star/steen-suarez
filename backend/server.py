@@ -225,6 +225,26 @@ def _extract_json(text: str) -> dict:
     raise ValueError("No se pudo extraer JSON válido de la respuesta del modelo")
 
 
+async def _send_with_retry(chat, message, retries: int = 2, delay: float = 2.5):
+    """Envía mensaje a LLM con reintentos ante fallos transitorios (502, timeouts)."""
+    import asyncio
+    last_err = None
+    for attempt in range(retries + 1):
+        try:
+            return await chat.send_message(message)
+        except Exception as e:
+            err_str = str(e).lower()
+            # Solo reintentar en errores transitorios típicos
+            transient = any(k in err_str for k in ["502", "bad gateway", "timeout", "connection", "overloaded", "rate limit"])
+            last_err = e
+            if attempt < retries and transient:
+                logging.warning(f"LLM transient error (attempt {attempt + 1}): {e}. Reintentando en {delay}s...")
+                await asyncio.sleep(delay)
+                continue
+            raise
+    raise last_err if last_err else RuntimeError("LLM retry failed")
+
+
 # ============ COACH (Chat conversacional) ============
 class CoachSession(BaseModel):
     id: str
@@ -790,7 +810,7 @@ async def intake_submit(req: IntakeSubmit, user: str = Depends(verify_token)):
     ).with_model("anthropic", "claude-sonnet-4-5-20250929")
 
     try:
-        response = await chat.send_message(UserMessage(text=prompt))
+        response = await _send_with_retry(chat, UserMessage(text=prompt))
         data = _extract_json(response)
     except Exception as e:
         logging.exception("Error generando roadmap")
@@ -924,7 +944,7 @@ async def journey_today(user: str = Depends(verify_token)):
     ).with_model("anthropic", "claude-sonnet-4-5-20250929")
 
     try:
-        response = await chat.send_message(UserMessage(text=prompt))
+        response = await _send_with_retry(chat, UserMessage(text=prompt))
         data = _extract_json(response)
     except Exception as e:
         logging.exception("Error guía diaria")
@@ -1046,7 +1066,7 @@ async def journey_review(user: str = Depends(verify_token)):
     ).with_model("anthropic", "claude-sonnet-4-5-20250929")
 
     try:
-        response = await chat.send_message(UserMessage(text=prompt))
+        response = await _send_with_retry(chat, UserMessage(text=prompt))
     except Exception as e:
         logging.exception("Error review")
         raise HTTPException(status_code=500, detail=f"Error IA: {str(e)}")
