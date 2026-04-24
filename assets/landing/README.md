@@ -1,0 +1,128 @@
+# LANDING — MINICLASE GRATIS
+
+**Archivo:** `index.html`
+**Propósito:** Landing pública de opt-in para la miniclase de 3 videos.
+**Estado:** HTML estático funcional v1 — pendiente integración de backend.
+
+---
+
+## ESTRUCTURA
+
+| Sección | Propósito |
+|---|---|
+| Hero | Headline + subheadline + form de opt-in (above the fold) |
+| Lo que vas a aprender | 3 cards con resumen de cada video |
+| Quién soy | Bio breve de Steven con disclaimer de "resultados no típicos" |
+| Para quién NO es / SÍ es | Anti-target explícito (filtro automático del lead) |
+| Final CTA | Botón ancla al form |
+| Footer | Disclaimer legal completo + links |
+
+---
+
+## DECISIONES DE DISEÑO
+
+- **Fondo dominante negro** (`#0D0D0D`) según brand kit — diferenciación inmediata vs. landings genéricos blancos
+- **Gold (`#FFD700`)** solo en headlines, números, y CTA — discreto, no decorativo
+- **Tipografía Inter/Arial** sin licencia premium (escalable inmediatamente)
+- **Sección "NO es para ti"** en lugar de las típicas testimonials infladas — califica el lead antes de capturar
+- **Form de 3 campos** (nombre, email, estado) — más datos que estándar pero necesario para segmentación + compliance estatal
+- **Disclaimer legal completo en footer** — versión larga del compliance checklist (Sección 4)
+- **Sin testimonios ni números de ingreso** en la versión inicial — se agregan cuando estén archivados con permisos firmados
+
+---
+
+## DEPLOYMENT
+
+### Opciones (en orden de simplicidad)
+1. **Carrd** — pegar HTML, dominio custom, $19/año. Más simple.
+2. **Vercel + GitHub** — push desde este repo, dominio custom, $0. Recomendado para iteración rápida.
+3. **Netlify** — equivalente a Vercel.
+4. **Webflow** — si se quiere editar visualmente sin tocar código.
+5. **Skool nativo** — Skool tiene landing builder pero limitado.
+
+### Para deploy en Vercel desde este repo
+```bash
+# Asumiendo este archivo en /assets/landing/
+# Crear vercel.json en root del repo si no existe
+# Apuntar build a este folder
+vercel --prod
+```
+
+### Para integración con email/Skool
+Reemplazar el `handleSubmit` en el `<script>` con:
+- POST a webhook de ConvertKit / MailerLite / ActiveCampaign
+- O POST a webhook de Skool (vía Zapier o Make.com)
+- O POST a GHL custom webhook que dispare workflow
+
+Ejemplo con ConvertKit:
+```js
+fetch('https://api.convertkit.com/v3/forms/{FORM_ID}/subscribe', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    api_key: 'PUBLIC_KEY',
+    email: data.email,
+    first_name: data.nombre,
+    fields: { estado: data.estado }
+  })
+});
+```
+
+---
+
+## TRACKING
+
+Antes de lanzar, agregar:
+- [ ] Meta Pixel (para remarketing y conversión de ads)
+- [ ] GA4 (analytics)
+- [ ] Conversión goal "opt-in" en GA4
+- [ ] Conversion event "Lead" en Meta Pixel cuando se completa form
+
+Snippets para insertar en `<head>`:
+```html
+<!-- Meta Pixel -->
+<script>!function(f,b,e,v,n,t,s){...}('init','PIXEL_ID');</script>
+
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+```
+
+---
+
+## COMPLIANCE CHECKLIST
+
+Antes de publicar, validar contra `compliance/checklist-contenido.md`:
+
+- [x] Sin income claims en headline o subhead
+- [x] Sin promesa de resultados específicos
+- [x] Disclaimer estándar completo en footer
+- [x] No menciona TCT ni Experior
+- [x] No nombra competidores (WFG, Primerica, etc.)
+- [x] Bio de Steven incluye disclaimer "resultados no típicos"
+- [x] Form pide estado (necesario para compliance multi-state)
+- [ ] Política de privacidad publicada (link en footer apunta a `#` — pendiente)
+- [ ] Términos de uso publicados (pendiente)
+- [ ] Email de opt-in confirma desuscripción funcional (CAN-SPAM)
+
+---
+
+## RESPONSIVE / ACCESIBILIDAD
+
+- Mobile-first via media queries
+- `prefers-reduced-motion` no implementado (sin animaciones agresivas)
+- Contraste cumple WCAG AA en gold/black
+- Form labels visibles (no solo placeholders)
+- Inputs con `autocomplete` para autofill móvil
+
+---
+
+## DECISIONES PENDIENTES
+
+- [ ] Comprar dominio (`elarquitectodelcierre.com` u otro)
+- [ ] Configurar DNS apuntando a Vercel/Netlify
+- [ ] Subir foto profesional de Steven (reemplazar placeholder)
+- [ ] Decidir tool de email (ConvertKit / MailerLite) y reemplazar `handleSubmit`
+- [ ] Crear página de gracias post-opt-in (`/gracias.html`)
+- [ ] Crear página de privacidad y términos (linkeadas en footer)
+- [ ] Configurar Meta Pixel + GA4
+- [ ] Configurar redirect de Skool join automático (opcional — usuario completa opt-in y entra a comunidad gratis automáticamente)

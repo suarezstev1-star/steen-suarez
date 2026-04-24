@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Miniclase gratis de 3 videos para agentes de seguros de vida e IUL en el mercado latino. Sistema técnico, sin motivación." />
+  <title>La Arquitectura de un Cierre — Miniclase Gratis | El Arquitecto</title>
+  <meta property="og:title" content="La Arquitectura de un Cierre — Miniclase Gratis" />
+  <meta property="og:description" content="3 videos. Sistema técnico para cerrar vida + IUL en el mercado latino. Sin motivación. Sin scripts MLM." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root {
+      --black: #0D0D0D;
+      --gold: #FFD700;
+      --gold-dark: #B8860B;
+      --white: #FFFFFF;
+      --gray-light: #F5F5F5;
+      --gray-mid: #2D2D2D;
+      --green: #AAEE00;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', Arial, Helvetica, sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .logo {
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 1px;
+      color: var(--gold);
+    }
+    .logo span { color: var(--white); font-weight: 400; }
+
+    /* Hero */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+    h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+    }
+    h1 .gold { color: var(--gold); }
+    .subheadline {
+      font-size: clamp(18px, 2.2vw, 22px);
+      color: #ccc;
+      max-width: 720px;
+      margin: 0 auto 40px;
+    }
+
+    /* Form */
+    .form-card {
+      background: var(--gray-mid);
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      padding: 32px;
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .form-card h3 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: var(--white);
+    }
+    .form-card label {
+      display: block;
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 6px;
+      margin-top: 14px;
+      font-weight: 500;
+    }
+    .form-card label:first-of-type { margin-top: 0; }
+    .form-card input, .form-card select {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--black);
+      border: 1px solid #444;
+      border-radius: 4px;
+      color: var(--white);
+      font-size: 16px;
+      font-family: inherit;
+    }
+    .form-card input:focus, .form-card select:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .form-card button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 16px;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.15s;
+    }
+    .form-card button:hover { background: #ffe44d; }
+    .form-card .privacy {
+      font-size: 12px;
+      color: #777;
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    /* Sections */
+    section {
+      padding: 80px 0;
+      border-top: 1px solid #1a1a1a;
+    }
+    h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 900;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    h2 .gold { color: var(--gold); }
+    .section-intro {
+      font-size: 18px;
+      color: #aaa;
+      max-width: 720px;
+      margin-bottom: 48px;
+    }
+
+    /* Videos cards */
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .video-card {
+      background: var(--gray-mid);
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      padding: 32px;
+    }
+    .video-card .num {
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .video-card h4 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .video-card .duration {
+      font-size: 13px;
+      color: var(--gold-dark);
+      font-family: 'Courier New', monospace;
+      margin-bottom: 16px;
+    }
+    .video-card p {
+      color: #bbb;
+      font-size: 15px;
+    }
+
+    /* About Steven */
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .about-photo {
+      width: 100%;
+      aspect-ratio: 1;
+      background: #2a2a2a;
+      border: 2px solid var(--gold-dark);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 14px;
+    }
+    .about p { color: #bbb; margin-bottom: 16px; font-size: 17px; }
+    .about p:last-child { margin-bottom: 0; }
+    @media (max-width: 720px) {
+      .about { grid-template-columns: 1fr; }
+      .about-photo { max-width: 240px; margin: 0 auto; }
+    }
+
+    /* Anti-section */
+    .anti-section h2 { color: var(--white); }
+    .anti-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 40px;
+    }
+    .anti-card {
+      background: var(--gray-mid);
+      border-radius: 8px;
+      padding: 32px;
+    }
+    .anti-card.no { border-left: 4px solid #E63946; }
+    .anti-card.si { border-left: 4px solid var(--green); }
+    .anti-card h4 {
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .anti-card.no h4 { color: #E63946; }
+    .anti-card.si h4 { color: var(--green); }
+    .anti-card ul { list-style: none; }
+    .anti-card li {
+      padding: 6px 0;
+      color: #ccc;
+      font-size: 15px;
+    }
+    @media (max-width: 720px) { .anti-grid { grid-template-columns: 1fr; } }
+
+    /* Final CTA */
+    .final-cta {
+      text-align: center;
+      padding: 100px 0 80px;
+    }
+    .final-cta h2 { margin-bottom: 32px; }
+    .final-cta a.cta-btn {
+      display: inline-block;
+      padding: 18px 40px;
+      background: var(--gold);
+      color: var(--black);
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-decoration: none;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-size: 16px;
+      transition: background 0.15s;
+    }
+    .final-cta a.cta-btn:hover { background: #ffe44d; }
+
+    /* Footer */
+    footer {
+      background: #060606;
+      padding: 48px 0 32px;
+      border-top: 1px solid #1a1a1a;
+    }
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 720px) { .footer-content { grid-template-columns: 1fr; } }
+    .footer-disclaimer {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.7;
+    }
+    .footer-links {
+      font-size: 13px;
+      color: #888;
+    }
+    .footer-links a {
+      color: #aaa;
+      text-decoration: none;
+      display: block;
+      padding: 4px 0;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-bottom {
+      text-align: center;
+      font-size: 12px;
+      color: #555;
+      padding-top: 24px;
+      border-top: 1px solid #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="logo">EL ARQUITECTO <span>DEL CIERRE</span></div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <div class="eyebrow">Miniclase Gratis · 3 Videos</div>
+      <h1>
+        La <span class="gold">Arquitectura</span><br />
+        de un Cierre
+      </h1>
+      <p class="subheadline">
+        Sistema técnico para agentes de vida e IUL en el mercado latino. Sin scripts MLM. Sin motivación. Solo arquitectura.
+      </p>
+
+      <form class="form-card" id="optinForm" onsubmit="handleSubmit(event)">
+        <h3>Acceso inmediato al Video 1</h3>
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" required autocomplete="name" />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email" />
+
+        <label for="estado">Estado de residencia (US)</label>
+        <select id="estado" name="estado" required>
+          <option value="">Selecciona tu estado</option>
+          <option>Florida</option>
+          <option>Texas</option>
+          <option>California</option>
+          <option>New York</option>
+          <option>New Jersey</option>
+          <option>Georgia</option>
+          <option>Illinois</option>
+          <option>Arizona</option>
+          <option>North Carolina</option>
+          <option>Otro estado de US</option>
+        </select>
+
+        <button type="submit">Acceder a la miniclase</button>
+        <p class="privacy">Tu email queda en nuestra lista. Sin spam. Te puedes desuscribir en cualquier momento.</p>
+      </form>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Lo que vas a aprender en los <span class="gold">3 videos</span></h2>
+      <p class="section-intro">
+        Una miniclase técnica, no una sesión de motivación. Workbook descargable con cada video.
+      </p>
+
+      <div class="videos-grid">
+        <div class="video-card">
+          <div class="num">01</div>
+          <h4>Diagnóstico</h4>
+          <div class="duration">22 min · Workbook PDF incluido</div>
+          <p>Por qué la mayoría de agentes latinos queda estancado entre $3K y $10K al mes. Los 3 cuellos de botella técnicos. Autoevaluación de 7 preguntas para identificar dónde estás fallando hoy.</p>
+        </div>
+
+        <div class="video-card">
+          <div class="num">02</div>
+          <h4>La Arquitectura</h4>
+          <div class="duration">28 min · Plantilla editable</div>
+          <p>Las 3 capas de un cierre profesional. El filtro de 5 preguntas de calificación. La estructura C.A.S.H. para la conversación. El framework V.I.D.A. para el cierre.</p>
+        </div>
+
+        <div class="video-card">
+          <div class="num">03</div>
+          <h4>Aplicación a IUL</h4>
+          <div class="duration">18 min · Checklist de aplicación</div>
+          <p>La arquitectura aplicada a una conversación de IUL real. Las 3 reglas técnicas que no se rompen nunca. Lo que NO se hace — y por qué el cierre compliant es más fuerte.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Quién soy</h2>
+      <div class="about">
+        <div class="about-photo">[Foto de Steven]</div>
+        <div>
+          <p><strong style="color:var(--gold)">Steven Suarez · El Arquitecto</strong></p>
+          <p>Construí una operación con más de 100 agentes activos en el mercado latino de Estados Unidos. Mi propio override pasó de $200K a una proyección de $1M en menos de 3 años.</p>
+          <p>Lo que voy a enseñarte en esta miniclase no es teoría — es lo que aplico todos los días.</p>
+          <p style="font-size:14px; color:#777; font-family:'Courier New',monospace;">
+            Mis resultados no son típicos. El éxito en este negocio depende del esfuerzo individual, licencias activas, y factores específicos al mercado.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="anti-section">
+    <div class="container">
+      <h2>Para quién <span class="gold">NO es</span> esto</h2>
+      <p class="section-intro">
+        Si lo que buscas está en la columna de la izquierda, mejor cierra esta página. Te ahorro el clic.
+      </p>
+
+      <div class="anti-grid">
+        <div class="anti-card no">
+          <h4>NO es para ti si buscas</h4>
+          <ul>
+            <li>· Frases motivacionales</li>
+            <li>· "Hazte rico desde casa"</li>
+            <li>· Scripts MLM genéricos</li>
+            <li>· Promesas de ingreso garantizado</li>
+            <li>· Testimonios con autos de lujo</li>
+          </ul>
+        </div>
+        <div class="anti-card si">
+          <h4>SÍ es para ti si buscas</h4>
+          <ul>
+            <li>· Sistema técnico replicable</li>
+            <li>· Frameworks específicos vida + IUL</li>
+            <li>· Compliance respetado siempre</li>
+            <li>· Educación honesta del producto</li>
+            <li>· Construir carrera, no mes bueno</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <h2>Empieza con el <span class="gold">Video 1</span> ahora</h2>
+      <a href="#optinForm" class="cta-btn">Acceder a la miniclase gratis</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-disclaimer">
+          <strong style="color:#999">Disclaimer legal</strong><br />
+          Los seguros de vida y los productos de seguro indexado no son productos de inversión y no están garantizados por la FDIC ni por ninguna agencia gubernamental. Los valores ilustrados en cualquier presentación son proyecciones basadas en supuestos y no son una garantía de rendimiento futuro. Los beneficios fiscales mencionados están sujetos a cambios en la legislación fiscal y a la condición activa de la póliza. Consulte a su asesor fiscal antes de tomar decisiones basadas en consideraciones impositivas. Los productos y disponibilidad varían por estado. Steven Suarez es un agente de seguros independiente con licencia en los estados aplicables.
+        </div>
+        <div class="footer-links">
+          <strong style="color:#aaa">Enlaces</strong>
+          <a href="#">Política de privacidad</a>
+          <a href="#">Términos de uso</a>
+          <a href="#">Contacto</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2026 El Arquitecto del Cierre · Steven Suarez. Todos los derechos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Form submission stub — reemplazar con integración real (ConvertKit, Skool API, etc.)
+    function handleSubmit(event) {
+      event.preventDefault();
+      const data = {
+        nombre: document.getElementById('nombre').value,
+        email: document.getElementById('email').value,
+        estado: document.getElementById('estado').value,
+      };
+      console.log('Opt-in payload (replace with real endpoint):', data);
+      // TODO: POST a endpoint de email tool / Skool join / GHL webhook
+      alert('Recibido. Te llega un email con el Video 1 en los próximos 5 minutos. (Replace this alert with redirect to thank-you page.)');
+    }
+  </script>
+</body>
+</html>
