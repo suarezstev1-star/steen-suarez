@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard TCT — El Arquitecto + El Taller + Estructura</title>
+  <style>
+    :root {
+      --black: #0D0D0D;
+      --gold: #FFD700;
+      --green: #AAEE00;
+      --red: #E63946;
+      --gray-mid: #2D2D2D;
+      --gray-light: #1a1a1a;
+      --white: #FFFFFF;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--black);
+      color: var(--white);
+      padding: 24px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .subtitle { color: #888; font-size: 14px; margin-bottom: 32px; font-family: 'Courier New', monospace; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .kpi {
+      background: var(--gray-mid);
+      padding: 20px;
+      border-radius: 6px;
+      border-left: 3px solid var(--gold);
+    }
+    .kpi.green { border-left-color: var(--green); }
+    .kpi.red { border-left-color: var(--red); }
+    .kpi-label {
+      font-size: 11px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1;
+    }
+    .kpi-meta {
+      font-size: 12px;
+      color: #777;
+      margin-top: 6px;
+      font-family: 'Courier New', monospace;
+    }
+    .kpi-meta.up { color: var(--green); }
+    .kpi-meta.down { color: var(--red); }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--gold);
+      margin: 32px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+
+    table {
+      width: 100%;
+      background: var(--gray-mid);
+      border-radius: 6px;
+      border-collapse: collapse;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background: var(--black);
+      color: var(--gold);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    td { border-top: 1px solid var(--gray-light); }
+    tr:hover td { background: rgba(255, 215, 0, 0.05); }
+    td.num { font-family: 'Courier New', monospace; text-align: right; }
+    td .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .badge.green { background: rgba(170, 238, 0, 0.2); color: var(--green); }
+    .badge.gold { background: rgba(255, 215, 0, 0.2); color: var(--gold); }
+    .badge.red { background: rgba(230, 57, 70, 0.2); color: var(--red); }
+  </style>
+</head>
+<body>
+
+  <h1>Dashboard — Funnel TCT</h1>
+  <div class="subtitle">El Arquitecto · El Taller · Estructura · TCT // Última actualización: <span id="lastUpdate">cargando...</span></div>
+
+  <!-- CAPA 1: TOP OF FUNNEL -->
+  <div class="section-title">CAPA 1 · IG ENTRENADOR + LANDING (TOP OF FUNNEL)</div>
+  <div class="grid" id="capa1Grid"></div>
+
+  <!-- CAPA 2: SKOOL -->
+  <div class="section-title">CAPA 2 · SKOOL (FREE + PAID)</div>
+  <div class="grid" id="capa2Grid"></div>
+
+  <!-- CAPA 3: PUENTE Y TCT -->
+  <div class="section-title">CAPA 3 · PUENTE → ESTRUCTURA → TCT</div>
+  <div class="grid" id="capa3Grid"></div>
+
+  <!-- DESEMPEÑO POR ED -->
+  <div class="section-title">DESEMPEÑO POR ED (mes actual)</div>
+  <table>
+    <thead>
+      <tr>
+        <th>ED</th>
+        <th>Asignados</th>
+        <th>2ª llamada</th>
+        <th>Avanzaron</th>
+        <th>Conversión</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody id="edTable"></tbody>
+  </table>
+
+  <!-- ECONOMICS -->
+  <div class="section-title">ECONOMICS (mes actual)</div>
+  <div class="grid" id="economicsGrid"></div>
+
+  <script>
+    // ============================================================
+    // STUB DATA — reemplazar con fetch a backend / GHL API / Skool
+    // ============================================================
+    const data = {
+      lastUpdate: new Date().toLocaleString('es-MX'),
+
+      capa1: [
+        { label: 'Seguidores IG', value: '0', meta: '+0 vs. mes anterior', metaClass: '' },
+        { label: 'Visitas Landing', value: '0', meta: 'meta: 5,000/mes', metaClass: '' },
+        { label: 'Opt-ins Miniclase', value: '0', meta: 'meta: 100/mes', metaClass: '' },
+        { label: 'Conv. Landing→Opt-in', value: '0%', meta: 'meta: 25-35%', metaClass: '' }
+      ],
+
+      capa2: [
+        { label: 'Miembros Skool Free', value: '0', meta: 'meta M3: 500', metaClass: '' },
+        { label: 'Completion V3 Miniclase', value: '0%', meta: 'meta: 35%+', metaClass: '' },
+        { label: 'Miembros El Taller (paid)', value: '0', meta: 'meta M3: 60', metaClass: '' },
+        { label: 'MRR (USD)', value: '$0', meta: 'meta M3: $2,820', metaClass: '' },
+        { label: 'Retención mes 2', value: '0%', meta: 'meta: 70%+', metaClass: '' },
+        { label: 'Miembros Nivel 4+', value: '0', meta: 'meta M3: 8', metaClass: 'pool puente' }
+      ],
+
+      capa3: [
+        { label: 'Candidatos Bridge', value: '0', meta: 'identificados este mes', metaClass: '' },
+        { label: '1ª llamadas Steven', value: '0', meta: 'agendadas este mes', metaClass: '' },
+        { label: 'Asignados a EDs', value: '0', meta: 'pasaron filtro', metaClass: '' },
+        { label: 'Agentes nuevos TCT', value: '0', meta: 'firmaron contrato', metaClass: 'green' },
+        { label: 'En espera de release', value: '0', meta: 'IMO actual activo', metaClass: '' }
+      ],
+
+      eds: [
+        { name: 'Gaspare Marascia', asignados: 0, llamadas: 0, avanzaron: 0, conv: '—', status: 'gold' },
+        { name: 'Víctor Estrada', asignados: 0, llamadas: 0, avanzaron: 0, conv: '—', status: 'gold' },
+        { name: 'Carlos Solino', asignados: 0, llamadas: 0, avanzaron: 0, conv: '—', status: 'gold' },
+        { name: 'Yaima Rojas', asignados: 0, llamadas: 0, avanzaron: 0, conv: '—', status: 'gold' },
+        { name: 'Andrea Solano', asignados: 0, llamadas: 0, avanzaron: 0, conv: '—', status: 'gold' }
+      ],
+
+      economics: [
+        { label: 'Ad Spend', value: '$0', meta: 'Meta + IG', metaClass: '' },
+        { label: 'Revenue Curso', value: '$0', meta: 'mensual + lifetime', metaClass: 'green' },
+        { label: 'Revenue Override', value: '$0', meta: 'producción nuevos agentes', metaClass: 'green' },
+        { label: 'CAC blended', value: '—', meta: 'meta: < $150 al M3', metaClass: '' },
+        { label: 'LTV alumno paid', value: '—', meta: 'meta: $494 al M3', metaClass: '' },
+        { label: 'LTV:CAC', value: '—', meta: 'meta: 4x al M3', metaClass: '' }
+      ]
+    };
+
+    // ============================================================
+    // RENDER
+    // ============================================================
+    document.getElementById('lastUpdate').textContent = data.lastUpdate;
+
+    function renderKPIs(targetId, items) {
+      const target = document.getElementById(targetId);
+      target.innerHTML = items.map(k => `
+        <div class="kpi ${k.metaClass || ''}">
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-value">${k.value}</div>
+          <div class="kpi-meta">${k.meta}</div>
+        </div>
+      `).join('');
+    }
+
+    renderKPIs('capa1Grid', data.capa1);
+    renderKPIs('capa2Grid', data.capa2);
+    renderKPIs('capa3Grid', data.capa3);
+    renderKPIs('economicsGrid', data.economics);
+
+    document.getElementById('edTable').innerHTML = data.eds.map(e => `
+      <tr>
+        <td>${e.name}</td>
+        <td class="num">${e.asignados}</td>
+        <td class="num">${e.llamadas}</td>
+        <td class="num">${e.avanzaron}</td>
+        <td class="num">${e.conv}</td>
+        <td><span class="badge ${e.status}">activo</span></td>
+      </tr>
+    `).join('');
+  </script>
+</body>
+</html>
