@@ -1,8 +1,18 @@
-# LANDING — MINICLASE GRATIS
+# LANDING — SITIO PÚBLICO COMPLETO
 
-**Archivo:** `index.html`
-**Propósito:** Landing pública de opt-in para la miniclase de 3 videos.
-**Estado:** HTML estático funcional v1 — pendiente integración de backend.
+**Estado:** Funnel web completo v1, listo para deploy. Pendiente: env vars en Vercel + URLs de Skool checkout.
+
+## Archivos
+
+| Archivo | Ruta pública | Propósito |
+|---|---|---|
+| `index.html` | `/` | Landing del opt-in a miniclase |
+| `gracias.html` | `/gracias` | Confirmación post-opt-in |
+| `taller.html` | `/taller` | Sales page de El Taller (paid) |
+| `privacidad.html` | `/privacidad` | Política de privacidad (GDPR/CCPA) |
+| `terminos.html` | `/terminos` | Términos de uso |
+| `api/optin.js` | `/api/optin` | Serverless function: form → MailerLite |
+| `vercel.json` | — | Config de deployment (clean URLs + security headers) |
 
 ---
 
@@ -41,12 +51,31 @@
 5. **Skool nativo** — Skool tiene landing builder pero limitado.
 
 ### Para deploy en Vercel desde este repo
-```bash
-# Asumiendo este archivo en /assets/landing/
-# Crear vercel.json en root del repo si no existe
-# Apuntar build a este folder
-vercel --prod
+
+1. Login en Vercel → Add New Project → Import `suarezstev1-star/steen-suarez`
+2. Framework Preset: **Other**
+3. **Root Directory: `assets/landing`** (importante)
+4. Build Command: dejar vacío (HTML estático)
+5. Output Directory: dejar vacío
+6. Deploy
+
+### Variables de entorno requeridas (Vercel dashboard)
+
 ```
+MAILERLITE_API_KEY    = (tu API key de MailerLite)
+MAILERLITE_GROUP_ID   = (ID del grupo "Miniclase" en MailerLite)
+```
+
+Sin estas, el form de opt-in retorna error 500. Configurar antes del primer deploy productivo.
+
+### Conectar dominio
+- Vercel → Project → Settings → Domains → Add `elarquitectodelcierre.com`
+- En Namecheap, agregar A record + CNAME que Vercel te indique
+- HTTPS automático
+
+### Wiring pendiente post-deploy
+1. **Tracking:** insertar snippets de GA4 + Meta Pixel en `<head>` de cada `.html` (o usar GTM)
+2. **Skool checkout URLs:** en `taller.html`, los 3 botones de pricing tienen `data-tier` pero `href="#"`. Reemplazar con URLs reales de Skool checkout cuando estén configurados
 
 ### Para integración con email/Skool
 Reemplazar el `handleSubmit` en el `<script>` con:
