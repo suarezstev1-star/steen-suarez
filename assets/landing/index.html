@@ -448,9 +448,9 @@
         </div>
         <div class="footer-links">
           <strong style="color:#aaa">Enlaces</strong>
-          <a href="#">Política de privacidad</a>
-          <a href="#">Términos de uso</a>
-          <a href="#">Contacto</a>
+          <a href="/privacidad">Política de privacidad</a>
+          <a href="/terminos">Términos de uso</a>
+          <a href="mailto:hola@elarquitectodelcierre.com">Contacto</a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -460,17 +460,66 @@
   </footer>
 
   <script>
-    // Form submission stub — reemplazar con integración real (ConvertKit, Skool API, etc.)
-    function handleSubmit(event) {
-      event.preventDefault();
-      const data = {
-        nombre: document.getElementById('nombre').value,
-        email: document.getElementById('email').value,
-        estado: document.getElementById('estado').value,
+    function getUTMs() {
+      const p = new URLSearchParams(window.location.search);
+      return {
+        utm_source: p.get('utm_source') || '',
+        utm_medium: p.get('utm_medium') || '',
+        utm_campaign: p.get('utm_campaign') || '',
+        utm_content: p.get('utm_content') || '',
       };
-      console.log('Opt-in payload (replace with real endpoint):', data);
-      // TODO: POST a endpoint de email tool / Skool join / GHL webhook
-      alert('Recibido. Te llega un email con el Video 1 en los próximos 5 minutos. (Replace this alert with redirect to thank-you page.)');
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+      const button = event.target.querySelector('button[type="submit"]');
+      const originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Enviando...';
+
+      const data = {
+        nombre: document.getElementById('nombre').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        estado: document.getElementById('estado').value,
+        ...getUTMs(),
+      };
+
+      try {
+        const response = await fetch('/api/optin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Error desconocido.');
+        }
+
+        // Tracking — GA4
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'landing_form_submitted', {
+            estado: data.estado,
+            utm_source: data.utm_source,
+            utm_campaign: data.utm_campaign,
+          });
+        }
+        // Tracking — Meta Pixel
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'Lead', { content_name: 'Miniclase Optin' });
+        }
+
+        // Persistir nombre + email en sessionStorage para personalizar gracias.html
+        sessionStorage.setItem('arq_nombre', data.nombre);
+        sessionStorage.setItem('arq_email', data.email);
+
+        window.location.href = '/gracias';
+      } catch (err) {
+        button.disabled = false;
+        button.textContent = originalText;
+        alert(err.message || 'Error. Revisa tu conexión e inténtalo de nuevo.');
+      }
     }
   </script>
 </body>
