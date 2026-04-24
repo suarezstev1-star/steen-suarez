@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="El Taller del Arquitecto — Sistema completo de ventas de vida + IUL para el mercado latino. 10 módulos, comunidad privada, Q&A live mensual." />
+  <title>El Taller del Arquitecto · Sistema Completo de Ventas de Vida + IUL</title>
+  <meta property="og:title" content="El Taller del Arquitecto" />
+  <meta property="og:description" content="10 módulos. Comunidad privada. Sin scripts MLM." />
+  <style>
+    :root {
+      --black: #0D0D0D;
+      --gold: #FFD700;
+      --gold-dark: #B8860B;
+      --green: #AAEE00;
+      --red: #E63946;
+      --white: #FFFFFF;
+      --gray-mid: #2D2D2D;
+      --gray-light: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    header { padding: 24px 0; border-bottom: 1px solid var(--gray-light); }
+    .logo { font-weight: 900; font-size: 18px; letter-spacing: 1px; color: var(--gold); }
+    .logo span { color: var(--white); font-weight: 400; }
+
+    /* Hero */
+    .hero { padding: 80px 0 60px; text-align: center; }
+    .eyebrow {
+      display: inline-block;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+    h1 {
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+    }
+    h1 .gold { color: var(--gold); }
+    .subheadline {
+      font-size: clamp(18px, 2.2vw, 22px);
+      color: #ccc;
+      max-width: 720px;
+      margin: 0 auto 32px;
+    }
+    .cta-primary {
+      display: inline-block;
+      padding: 18px 40px;
+      background: var(--gold);
+      color: var(--black);
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-decoration: none;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-size: 15px;
+      transition: background 0.15s;
+    }
+    .cta-primary:hover { background: #ffe44d; }
+    .cta-meta { font-size: 13px; color: #888; margin-top: 12px; font-family: 'Courier New', monospace; }
+
+    section { padding: 80px 0; border-top: 1px solid var(--gray-light); }
+    h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 900;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    h2 .gold { color: var(--gold); }
+    .section-intro {
+      font-size: 18px;
+      color: #aaa;
+      max-width: 720px;
+      margin-bottom: 48px;
+    }
+
+    /* Modules grid */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .module-card {
+      background: var(--gray-mid);
+      border-left: 3px solid var(--gold-dark);
+      padding: 20px;
+      border-radius: 4px;
+    }
+    .module-card .num {
+      font-size: 12px;
+      color: var(--gold);
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .module-card h4 { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+    .module-card p { color: #aaa; font-size: 14px; }
+
+    /* Includes */
+    .includes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .include-card {
+      background: var(--gray-mid);
+      padding: 24px;
+      border-radius: 6px;
+    }
+    .include-card .icon { font-size: 28px; color: var(--gold); margin-bottom: 12px; font-weight: 900; }
+    .include-card h4 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .include-card p { color: #bbb; font-size: 14px; }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .price-card {
+      background: var(--gray-mid);
+      border: 2px solid #3a3a3a;
+      border-radius: 8px;
+      padding: 32px;
+      text-align: center;
+      position: relative;
+    }
+    .price-card.featured { border-color: var(--gold); }
+    .price-card.featured::before {
+      content: 'MÁS POPULAR';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gold);
+      color: var(--black);
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      border-radius: 4px;
+    }
+    .price-card h4 {
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .price-card .amount { font-size: 48px; font-weight: 900; line-height: 1; margin-bottom: 6px; }
+    .price-card .period { font-size: 13px; color: #888; margin-bottom: 24px; font-family: 'Courier New', monospace; }
+    .price-card ul { list-style: none; text-align: left; margin-bottom: 24px; }
+    .price-card li { padding: 6px 0; color: #ccc; font-size: 14px; }
+    .price-card li::before { content: '✓ '; color: var(--green); font-weight: 800; }
+    .price-card .cta {
+      display: block;
+      padding: 14px;
+      background: var(--gold);
+      color: var(--black);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+    .price-card .cta:hover { background: #ffe44d; }
+
+    /* Guarantee */
+    .guarantee {
+      background: var(--gray-mid);
+      border-left: 4px solid var(--green);
+      padding: 24px 32px;
+      border-radius: 4px;
+      max-width: 720px;
+      margin: 32px auto 0;
+    }
+    .guarantee strong { color: var(--green); }
+
+    /* FAQ */
+    .faq-item {
+      background: var(--gray-mid);
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .faq-item h4 { font-size: 17px; font-weight: 800; margin-bottom: 8px; color: var(--gold); }
+    .faq-item p { color: #bbb; font-size: 15px; }
+
+    /* Footer */
+    footer { background: #060606; padding: 48px 0 32px; border-top: 1px solid var(--gray-light); }
+    .footer-content { display: grid; grid-template-columns: 2fr 1fr; gap: 32px; margin-bottom: 32px; }
+    @media (max-width: 720px) { .footer-content { grid-template-columns: 1fr; } }
+    .footer-disclaimer { font-family: 'Courier New', monospace; font-size: 12px; color: #666; line-height: 1.7; }
+    .footer-links a {
+      color: #aaa;
+      text-decoration: none;
+      display: block;
+      padding: 4px 0;
+      font-size: 13px;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-bottom {
+      text-align: center;
+      font-size: 12px;
+      color: #555;
+      padding-top: 24px;
+      border-top: 1px solid var(--gray-light);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="logo">EL ARQUITECTO <span>DEL CIERRE</span></div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <div class="eyebrow">El Taller del Arquitecto</div>
+      <h1>El Sistema <span class="gold">Completo</span><br />de Ventas de Vida + IUL</h1>
+      <p class="subheadline">10 módulos técnicos. Comunidad privada de cerradores. Q&A live mensual con Steven. Sin scripts MLM. Sin motivación.</p>
+      <a href="#pricing" class="cta-primary">Ver opciones de acceso</a>
+      <p class="cta-meta">14 días de garantía · Sin descuentos por 24 horas · Acceso de por vida disponible</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Los <span class="gold">10 módulos</span> del Taller</h2>
+      <p class="section-intro">Si la miniclase te dio el plano, el Taller es donde construyes la casa. Cada módulo viene con video, workbook, y aplicación práctica.</p>
+
+      <div class="modules-grid">
+        <div class="module-card"><div class="num">MÓDULO 1</div><h4>Arquitectura del mercado latino</h4><p>4 perfiles de cliente, mapeo producto-necesidad.</p></div>
+        <div class="module-card"><div class="num">MÓDULO 2</div><h4>Anatomía técnica del IUL</h4><p>Floor + cap juntos. IRC §101(a) y §7702 sin mentir.</p></div>
+        <div class="module-card"><div class="num">MÓDULO 3</div><h4>Prospección sin llamadas frías</h4><p>Sistema de referidos. Pipeline que no se seca.</p></div>
+        <div class="module-card"><div class="num">MÓDULO 4</div><h4>La primera conversación</h4><p>Estructura C.A.S.H. completa con casos.</p></div>
+        <div class="module-card"><div class="num">MÓDULO 5</div><h4>Presentación de IUL con arquitectura</h4><p>De ilustración técnica a historia clara.</p></div>
+        <div class="module-card"><div class="num">MÓDULO 6</div><h4>Manejo de objeciones latinas</h4><p>"Déjame pensarlo", "tengo que hablar con mi pareja", etc.</p></div>
+        <div class="module-card"><div class="num">MÓDULO 7</div><h4>El cierre con V.I.D.A.</h4><p>Validar, Invitar, Decidir, Asegurar — sin presión.</p></div>
+        <div class="module-card"><div class="num">MÓDULO 8</div><h4>Underwriting y persistencia</h4><p>Examen médico, ratings, prevención de chargebacks.</p></div>
+        <div class="module-card"><div class="num">MÓDULO 9</div><h4>Tu sistema operativo</h4><p>Calendario, métricas, rutinas del cerrador consistente.</p></div>
+        <div class="module-card"><div class="num">MÓDULO 10</div><h4>Más allá del cierre</h4><p>Referidos sistemáticos. Construyendo carrera, no mes bueno.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Más allá del <span class="gold">curso</span></h2>
+      <p class="section-intro">El Taller no es solo videos. Es la comunidad que aplica el sistema en tiempo real.</p>
+
+      <div class="includes-grid">
+        <div class="include-card"><div class="icon">⌬</div><h4>Comunidad privada</h4><p>Skool. Canales por módulo. Preguntas técnicas respondidas semanalmente.</p></div>
+        <div class="include-card"><div class="icon">▣</div><h4>Q&A live mensual</h4><p>60 minutos en vivo con Steven. Casos reales. Replays disponibles.</p></div>
+        <div class="include-card"><div class="icon">▤</div><h4>Cierre de la semana</h4><p>Cada lunes Steven analiza un caso real con permiso del alumno.</p></div>
+        <div class="include-card"><div class="icon">⊞</div><h4>Library de scripts</h4><p>Plantillas de calificación, scripts de cita, follow-ups, manejo de objeciones.</p></div>
+        <div class="include-card"><div class="icon">▲</div><h4>Niveles de progreso</h4><p>Gamificación con 5 niveles. Ascenso desbloquea acceso avanzado.</p></div>
+        <div class="include-card"><div class="icon">◯</div><h4>Updates de por vida</h4><p>Nuevos módulos, casos, y plantillas se agregan continuamente sin costo extra.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container">
+      <h2>Tres formas de <span class="gold">entrar al Taller</span></h2>
+      <p class="section-intro">Mismo acceso completo. Diferente compromiso de tiempo y precio. Sin sorpresas.</p>
+
+      <div class="pricing-grid">
+        <div class="price-card">
+          <h4>Mensual</h4>
+          <div class="amount">$47</div>
+          <div class="period">por mes · cancela cuando quieras</div>
+          <ul>
+            <li>Acceso completo al curso</li>
+            <li>Comunidad privada</li>
+            <li>Q&A live mensual</li>
+            <li>Cierre de la semana</li>
+            <li>Sin compromiso largo</li>
+          </ul>
+          <a href="#" class="cta" data-tier="monthly">Empezar mensual</a>
+        </div>
+
+        <div class="price-card featured">
+          <h4>Anual</h4>
+          <div class="amount">$470</div>
+          <div class="period">al año · ahorras 2 meses</div>
+          <ul>
+            <li>Todo lo del mensual</li>
+            <li>Ahorro de $94/año</li>
+            <li>Compromiso anual claro</li>
+            <li>Pago único anual</li>
+          </ul>
+          <a href="#" class="cta" data-tier="annual">Elegir anual</a>
+        </div>
+
+        <div class="price-card">
+          <h4>Lifetime</h4>
+          <div class="amount">$497</div>
+          <div class="period">una sola vez · acceso de por vida</div>
+          <ul>
+            <li>Todo lo anterior</li>
+            <li>Sin renovaciones</li>
+            <li>Updates de por vida incluidos</li>
+            <li>Mejor opción a largo plazo</li>
+          </ul>
+          <a href="#" class="cta" data-tier="lifetime">Acceso de por vida</a>
+        </div>
+      </div>
+
+      <div class="guarantee">
+        <strong>Garantía 14 días</strong><br />
+        Si en 14 días no encuentras valor, escríbenos a hola@elarquitectodelcierre.com y te devolvemos el 100% sin preguntas. Después de 14 días, sin refund.
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Preguntas <span class="gold">frecuentes</span></h2>
+
+      <div class="faq-item">
+        <h4>¿Necesito licencia de seguros para inscribirme?</h4>
+        <p>No. El curso es educativo y se puede tomar sin licencia. Pero el sistema asume que vas a producir vida + IUL legalmente — eso requiere licencia activa en tu estado. Si no la tienes, te recomendamos sacarla en paralelo.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿Esto es MLM o reclutamiento de agentes?</h4>
+        <p>No. El Taller es un curso de ventas. No te reclutamos a ninguna compañía. No te ofrecemos contratos. Te enseñamos a cerrar mejor — punto. Lo que hagas con esa habilidad y dónde la apliques es decisión tuya.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿Cuánto tiempo me toma terminar el curso?</h4>
+        <p>El curso es autopace. La mayoría lo termina en 8–10 semanas dedicando 2–3 horas por semana. Tienes acceso indefinido (en mensual mientras pagues, en anual y lifetime sin límite).</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿Voy a ganar $X al mes después del curso?</h4>
+        <p>No prometemos resultados específicos. El curso te da el sistema técnico. Tu ingreso depende de tu esfuerzo, tus licencias activas, tu mercado, tu ética de trabajo, y muchos factores que no controlamos. Lo que sí garantizamos: si en 14 días no encuentras valor en el sistema, te devolvemos el dinero.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿Cuándo recibo acceso después de pagar?</h4>
+        <p>Inmediato. En menos de 5 minutos recibes email con tu acceso a Skool y al Módulo 0.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿Puedo cambiar de plan mensual a anual o lifetime después?</h4>
+        <p>Sí. Si empezaste con mensual y quieres pasarte a lifetime, te descontamos lo que ya pagaste durante los últimos 6 meses del precio del lifetime.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>¿En qué idioma está el contenido?</h4>
+        <p>100% en español. Pensado específicamente para el mercado latino en Estados Unidos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="text-align:center;">
+    <div class="container">
+      <h2>El plano ya lo viste.<br /><span class="gold">El Taller</span> es donde construyes.</h2>
+      <a href="#pricing" class="cta-primary" style="margin-top: 24px;">Ver opciones de acceso</a>
+      <p class="cta-meta">14 días de garantía · Sin descuentos por 24 horas</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-disclaimer">
+          <strong style="color:#999">Disclaimer legal</strong><br />
+          Los seguros de vida y los productos de seguro indexado no son productos de inversión y no están garantizados por la FDIC ni por ninguna agencia gubernamental. Los valores ilustrados en cualquier presentación son proyecciones basadas en supuestos y no son una garantía de rendimiento futuro. Los beneficios fiscales mencionados están sujetos a cambios en la legislación fiscal y a la condición activa de la póliza. Consulte a su asesor fiscal antes de tomar decisiones basadas en consideraciones impositivas. Los productos y disponibilidad varían por estado. Steven Suarez es un agente de seguros independiente con licencia en los estados aplicables. Resultados no típicos. El éxito en cualquier carrera de ventas depende del esfuerzo individual, licencias activas, y factores específicos al mercado.
+        </div>
+        <div class="footer-links">
+          <strong style="color:#aaa">Enlaces</strong>
+          <a href="/">Miniclase gratis</a>
+          <a href="/privacidad">Política de privacidad</a>
+          <a href="/terminos">Términos de uso</a>
+          <a href="mailto:hola@elarquitectodelcierre.com">Contacto</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2026 El Arquitecto del Cierre · Steven Suarez. Todos los derechos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Tracking — ViewContent al cargar
+    if (typeof gtag !== 'undefined') gtag('event', 'taller_landing_view');
+    if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: 'El Taller del Arquitecto' });
+
+    // CTA buttons — actualmente apuntan a # como placeholder.
+    // En producción reemplazar con URLs de Skool checkout por tier:
+    //   data-tier="monthly"  → URL Skool checkout mensual
+    //   data-tier="annual"   → URL Skool checkout anual
+    //   data-tier="lifetime" → URL Skool checkout lifetime
+    document.querySelectorAll('[data-tier]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tier = btn.dataset.tier;
+        if (typeof gtag !== 'undefined') gtag('event', 'checkout_started', { tier });
+        if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout', { content_name: tier });
+        // Cuando los URLs de Skool estén configurados, descomentar y reemplazar el href dinámicamente:
+        // const urls = { monthly: 'SKOOL_URL_MONTHLY', annual: 'SKOOL_URL_ANNUAL', lifetime: 'SKOOL_URL_LIFETIME' };
+        // window.location.href = urls[tier];
+      });
+    });
+  </script>
+</body>
+</html>
