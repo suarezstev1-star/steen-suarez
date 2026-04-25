@@ -1,0 +1,41 @@
+name: Feature request
+description: Proponer una nueva campaña, skill, integración o mejora
+title: "[Feature] "
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema o necesidad
+      description: ¿Qué problema resuelve esta propuesta? ¿Para qué campaña/audiencia?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+      description: Descripción de la solución sugerida.
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Tipo
+      options:
+        - Nueva composition (Remotion)
+        - Nueva skill / actualización de skill
+        - Integración externa (ElevenLabs, HeyGen, Firecrawl, etc.)
+        - Identidad de marca / copy
+        - Documentación / proceso
+        - Otro
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+  - type: textarea
+    id: compliance
+    attributes:
+      label: Consideraciones de compliance
+      description: Si involucra anuncios de seguros (IUL) o Meta Ads, indica revisión legal aplicable.

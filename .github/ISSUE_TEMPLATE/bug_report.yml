@@ -1,0 +1,56 @@
+name: Bug report
+description: Reportar un fallo en compositions, skills o configuración
+title: "[Bug] "
+labels: ["bug", "triage"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Resumen
+      description: Describe el problema en 1-2 frases.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      placeholder: |
+        1. Ejecutar `...`
+        2. Abrir `...`
+        3. Observar el error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Resultado obtenido
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área afectada
+      options:
+        - ai-video-studio (Remotion compositions)
+        - .agents/skills (marketing skills)
+        - .mcp.json / MCP servers
+        - CLAUDE.md / documentación
+        - Otro
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Entorno
+      placeholder: SO, versión de Node, navegador, etc.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / capturas
+      description: Pega logs relevantes. **NO incluyas API keys ni datos personales.**
