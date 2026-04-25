@@ -1,0 +1,89 @@
+{
+  "startedAt": "2026-04-25T22:08:33.653Z",
+  "target": "https://www.thecashteamagency.com",
+  "pageErrors": [],
+  "consoleErrors": [
+    {
+      "page": "home",
+      "text": "Failed to load resource: the server responded with a status of 403 ()"
+    },
+    {
+      "page": "home",
+      "text": "Failed to load resource: the server responded with a status of 403 ()"
+    },
+    {
+      "page": "home-mobile",
+      "text": "Failed to load resource: the server responded with a status of 403 ()"
+    },
+    {
+      "page": "home-mobile",
+      "text": "Failed to load resource: the server responded with a status of 403 ()"
+    }
+  ],
+  "failedRequests": [
+    {
+      "page": "home",
+      "url": "https://www.thecashteamagency.com/",
+      "status": 403,
+      "method": "GET",
+      "resourceType": "document"
+    },
+    {
+      "page": "home-mobile",
+      "url": "https://www.thecashteamagency.com/",
+      "status": 403,
+      "method": "GET",
+      "resourceType": "document"
+    }
+  ],
+  "brokenLinks": [
+    {
+      "url": "https://www.thecashteamagency.com",
+      "status": 403,
+      "context": "home page"
+    }
+  ],
+  "internalLinksChecked": [],
+  "externalLinksChecked": [],
+  "forms": [],
+  "buttonsTested": [],
+  "uxNotes": [
+    "Home: missing <title>",
+    "Home: missing meta description",
+    "Home: missing viewport meta (mobile UX)",
+    "Home: <html> has no lang attribute (a11y)",
+    "Home: no <h1> on page (SEO/a11y)"
+  ],
+  "screenshots": [
+    {
+      "name": "01-home-full",
+      "file": "/home/user/steen-suarez/audit/out/screenshots/01-home-full.png"
+    },
+    {
+      "name": "99-home-mobile",
+      "file": "/home/user/steen-suarez/audit/out/screenshots/99-home-mobile.png"
+    }
+  ],
+  "pagesVisited": [
+    {
+      "label": "home",
+      "url": "https://www.thecashteamagency.com/",
+      "status": 403
+    }
+  ],
+  "navigationErrors": [],
+  "meta": {
+    "title": "",
+    "description": "",
+    "viewport": "",
+    "lang": "",
+    "h1Count": 0,
+    "h1Text": [],
+    "imagesNoAlt": [],
+    "imagesTotal": 0,
+    "iframes": 0,
+    "buttons": 0,
+    "forms": 0
+  },
+  "endedAt": "2026-04-25T22:08:38.941Z"
+}
