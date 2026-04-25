@@ -10,25 +10,40 @@
 
 | Elemento | Valor |
 |---|---|
-| **Nombre real** | Steen Suarez |
+| **Nombre real** | **Steven Suarez** |
 | **Nombre de marca / personaje** | **El Arquitecto** |
-| **Marca extendida (US bilingüe)** | Steen Suarez — El Arquitecto · *The Agency Architect* |
-| **Tagline (ES)** | Las agencias no se construyen con hype. Se construyen con planos. |
-| **Tagline (EN)** | Agencies aren't built on hype. They're built on blueprints. |
-| **Categoría** | Entrenador y arquitecto de agencias de seguros de vida en EE.UU. |
-| **Mercado** | Agentes de seguros de vida en Estados Unidos — bilingüe (inglés + hispano US) |
-| **Misión** | Convertir agentes promedio en arquitectos de agencias de 7 cifras usando un sistema reproducible. |
+| **Marca extendida** | Steven Suarez — El Arquitecto |
+| **Marca alterna (cuando aplique inglés estratégico)** | *The Agency Architect* |
+| **Ecuación central de marca** | **Plano = Sistema.** Un plano sin sistema es un dibujo. Un sistema sin plano es un caos. |
+| **Tagline principal (ES)** | Las agencias no se construyen con hype. Se construyen con planos. |
+| **Tagline secundario (ES)** | El plano es el sistema. El sistema es la agencia. |
+| **Categoría** | Entrenador y arquitecto de agencias de seguros de vida para el mercado latino en EE.UU. |
+| **Mercado primario** | **Agentes latinos de seguros de vida en Estados Unidos.** Español-first. Inglés solo cuando suma estratégicamente (un término técnico, una frase corta de impacto). |
+| **Estado actual de la marca** | **Cero.** No hay cuentas, ni seguidores, ni contenido publicado. Todo lo que sigue es construcción desde foja cero. |
+| **Misión** | Convertir agentes latinos promedio en arquitectos de agencias de 7 cifras usando un sistema reproducible. |
 
-### Handles propuestos (verificar disponibilidad antes de usar)
-- `@elarquitecto` · `@theagencyarchitect` · `@steensuarez`
-- Handle alterno si están tomados: `@arquitectodeagencias` · `@buildtheagency`
+### Por qué nada de hype
+El mercado latino de agentes en EE.UU. está saturado de gritones con cadena de oro y "manifestaciones" que no convierten. Nuestro agente avatar **ya está cansado de eso** — busca alguien serio, con sistemas, que no le venda humo. **El Arquitecto vende exactamente lo opuesto al guru de hype**, y eso es nuestra ventaja competitiva. Si una pieza suena a "rise and grind" o a "manifest the abundance", se reescribe.
+
+### Handles propuestos (verificar disponibilidad — todas las cuentas se crean desde cero)
+**Prioridad 1 (español, marca-personaje):**
+- `@elarquitecto.suarez`
+- `@arquitectodeagencias`
+- `@stevensuarez.arquitecto`
+
+**Prioridad 2 (alternos si los anteriores están tomados):**
+- `@elarquitectolatino`
+- `@stevensuarezsuarez`
+- `@elplano.suarez`
+
+> Recomendación: el handle debe ser **idéntico** en TikTok, Instagram, YouTube y Threads. Antes de elegir, hacer un check rápido en namechk.com o cada plataforma manualmente.
 
 ---
 
 ## 2. El Personaje
 
 ### Backstory de marca (la historia que cuentas en bio, about, primer video viral)
-Un agente que vio cómo el 92% de los nuevos agentes quemaban su licencia en menos de 18 meses — no por falta de esfuerzo, sino por falta de **plano**. Decidió dejar de vender pólizas para empezar a diseñar agencias. Hoy diseña la estructura, los sistemas, los scripts, los lead flows, los contratos de override y los equipos que separan a un agente que sobrevive de un agente que construye un imperio.
+Un agente latino que vio cómo el 92% de los nuevos agentes quemaban su licencia en menos de 18 meses — no por falta de ganas, sino por falta de **plano**. Plano = sistema. Y nadie en el mercado latino le estaba enseñando a los agentes cómo construir un sistema; solo les vendían motivación. Steven decidió dejar de vender pólizas para empezar a **diseñar agencias**. Hoy diseña la estructura, los sistemas, los scripts, los lead flows, los contratos de override y los equipos que separan a un agente que sobrevive de un agente que construye un imperio.
 
 > *"Yo no te voy a enseñar a vender una póliza más. Te voy a enseñar a construir la agencia que vende mil sin ti."*
 
@@ -53,29 +68,34 @@ Un agente que vio cómo el 92% de los nuevos agentes quemaban su licencia en men
 1. **Calma como autoridad**: la frase corta y precisa pesa más que la frase emocional.
 2. **Datos > adjetivos**: "$47K en 9 días" siempre vence a "muchísimo dinero".
 3. **Frameworks con nombre**: cada idea importante tiene un nombre propio (ej. *El Plano de los 5 Pilares*).
-4. **Contraste constante**: posiciónate contra el "guru de hype" en cada pieza, sin nombrar a nadie.
-5. **Bilingüe natural**: cuando hablas en inglés, ocasionalmente sueltas una frase en español que se vuelve firma. Cuando hablas en español, sueltas el término técnico en inglés (commission, override, AP, IUL) — así suenas a US.
+4. **Contraste constante**: posiciónate contra el "guru de hype latino" en cada pieza, sin nombrar a nadie.
+5. **Plano = Sistema**: úsalo como mantra. "Esto no es un tip. Es parte del plano." / "El plano es el sistema."
+6. **Español-first con inglés técnico**: hablas en español. Solo entran palabras en inglés cuando son **términos técnicos del negocio** (commission, override, AP, face value, IUL, contract level, lead flow) o **una frase corta de impacto** que pesa más en inglés. Nunca Spanglish forzado.
 
 ### Frases firma (úsalas en rotación, no todas a la vez)
-**Español:**
+**Tier 1 — las más fuertes, repetir hasta que sean tuyas:**
 - "Las agencias no se construyen con hype. Se construyen con planos."
+- "El plano es el sistema. El sistema es la agencia."
 - "Tú no necesitas más motivación. Necesitas un plano."
-- "Los gritones venden cursos. Los arquitectos construyen agencias."
 - "Si no lo puedes dibujar en una pizarra, no lo puedes escalar."
 - "Primero el plano. Después el martillo."
 
-**English:**
-- "Agencies aren't built on hype. They're built on blueprints."
-- "You don't need more motivation. You need a blueprint."
-- "Loud guys sell courses. Architects build agencies."
-- "If you can't draw it on a whiteboard, you can't scale it."
+**Tier 2 — para variar:**
+- "Los gritones venden cursos. Los arquitectos construyen agencias."
+- "El que no tiene sistema, trabaja para el que sí lo tiene."
+- "Una agencia sin plano es un agente con más estrés."
+- "No vendo motivación. Entrego planos."
+- "Tu IMO te dio una licencia. No te dio un plano."
+
+**Inglés (uso estratégico — solo para frases impacto en thumbnails/títulos US Hispanic):**
 - "Blueprint first. Hammer second."
+- "No blueprint, no agency."
 
 ### Vocabulario obligatorio (úsalo seguido)
-plano, blueprint, estructura, fundación, pilares, andamio, scaffolding, foundation, framework, skyline, plot, levantar, diseñar, sistema, layout, override, AP, face value, contract level, lead flow
+plano, sistema, blueprint, estructura, fundación, pilares, andamio, levantar, diseñar, dibujar, layout, plano-sistema, agencia, equipo, override, AP, face value, contract level, lead flow, commission, IUL, FE (Final Expense)
 
-### Vocabulario prohibido (nunca aparece)
-hustle, grind, rise and grind, manifestar, mindset bro, "el universo", "vibras", "abundancia", emojis de fuego/cohete/dinero, gold-chain energy, "secret", "hack", "solo por hoy"
+### Vocabulario prohibido (jamás aparece)
+hustle, grind, rise and grind, manifestar, manifestación, mindset bro, "el universo", "vibras", "abundancia", "atrae lo que mereces", emojis de 🔥/🚀/💰/💎, "secreto", "hack", "trick", "solo por hoy", "energía", "frecuencia", "vibración", "millonario mentality"
 
 ### Cómo abre un video / post
 - Nunca con "Hola a todos".
@@ -86,7 +106,10 @@ hustle, grind, rise and grind, manifestar, mindset bro, "el universo", "vibras",
 
 ### Cómo cierra
 - Nunca con "Sígueme para más tips".
-- Siempre con una invitación arquitectónica: *"Comenta PLANO y te mando el blueprint."* / *"DM 'BLUEPRINT' for the framework."*
+- Siempre con una invitación arquitectónica:
+  - *"Comenta PLANO y te mando el sistema completo."*
+  - *"Escribe SISTEMA en los comentarios y te llega al DM."*
+  - *"Si quieres el plano, mándame la palabra ARQUITECTO."*
 
 ---
 
@@ -111,10 +134,11 @@ hustle, grind, rise and grind, manifestar, mindset bro, "el universo", "vibras",
 - T-square, escuadra, regla, lápiz de arquitecto
 - Render isométrico de un edificio (metáfora de la agencia)
 
-### Wardrobe (cómo se ve Steen en cámara)
+### Wardrobe (cómo se ve Steven en cámara)
 - Camisa negra o blanca lisa, jeans o pantalón sastre. Cero logos visibles.
-- Reloj sobrio (no Rolex de oro). Cero cadenas de oro. Cero camisas de marca.
+- Reloj sobrio (no Rolex de oro). **Cero cadenas de oro. Cero camisas de marca. Cero gorras hacia atrás.**
 - Pizarra blanca o de cianotipo detrás. Iluminación cálida, no estudio "guru".
+- El contraste con el guru de hype latino (cadena, camisa Gucci, fajo de billetes) debe ser **visualmente obvio** en los primeros 0.5 segundos de cualquier video.
 
 ---
 
@@ -143,55 +167,65 @@ hustle, grind, rise and grind, manifestar, mindset bro, "el universo", "vibras",
 | 3 | **Skyline** | Plateau Closer ($100K+) | De agente solo a agencia de $1M en 12 meses | $10,000 - $25,000 + override |
 
 ### Lead magnet base (entrada al funnel)
-**"El Plano de los 5 Pilares"** — PDF + Loom de 12 minutos donde Steen dibuja el plano completo en cámara. Captura email a cambio.
+**"El Plano de los 5 Pilares"** — PDF + Loom de 12 minutos donde Steven dibuja el plano-sistema completo en cámara, en español. Captura email + número de WhatsApp a cambio (el latino US convierte mejor por WhatsApp que por email).
 
 ---
 
-## 7. Bios para cada plataforma
+## 7. Bios para cada plataforma (todas en español-first)
 
-### Instagram / TikTok / Threads (≤ 150 chars)
-**ES:**
-> El Arquitecto de Agencias de Seguros de Vida 🏗️
-> Las agencias no se construyen con hype. Se construyen con planos.
-> ↓ Descarga El Plano gratis
+### Instagram (≤ 150 chars)
+> El Arquitecto · Agencias de Seguros de Vida
+> El plano es el sistema. El sistema es la agencia.
+> ↓ Descarga gratis "El Plano"
 
-**EN:**
-> The Agency Architect | Life Insurance
-> Agencies aren't built on hype. They're built on blueprints.
-> ↓ Free Blueprint below
+### TikTok (≤ 80 chars)
+> El Arquitecto · Sistemas para agentes de seguros de vida 🇺🇸
 
-*(Si Steen no quiere el emoji 🏗️ lo quitamos — está aquí solo porque IG penaliza bios sin pausa visual. Decide tú.)*
+### Threads (≤ 150 chars)
+> Diseño agencias de seguros de vida.
+> 0 hype. 100% sistema.
+> ↓ Plano gratis
 
-### YouTube (about / canal description)
-> Yo soy Steen Suarez — El Arquitecto. Diseño agencias de seguros de vida en Estados Unidos. Aquí no te voy a motivar. Aquí te voy a entregar el plano. 5 pilares, 0 hype. Si construyes con plano, escalas. Si construyes sin plano, te caes.
+### YouTube (about / descripción del canal)
+> Yo soy Steven Suarez — El Arquitecto. Diseño agencias de seguros de vida en Estados Unidos para agentes latinos que están cansados del hype. Aquí no te voy a motivar. Aquí te voy a entregar **el plano = el sistema**. 5 pilares. 0 cadenas de oro. Si construyes con plano, escalas. Si construyes sin plano, te caes.
 
-### LinkedIn (headline)
-> Architect of Life Insurance Agencies | Builder of $1M+ producer teams | Creator of *The Blueprint™*
+### LinkedIn (headline — aquí sí inglés porque LinkedIn US es bilingüe pro)
+> Arquitecto de Agencias de Seguros de Vida | Sistemas que escalan a 7 cifras | Creador de *El Plano*
+
+### LinkedIn (about)
+> Diseño sistemas para agentes de seguros de vida en EE.UU. — el mercado latino es mi obsesión. Mis agentes no necesitan más motivación; necesitan un plano. Eso es lo que entrego: planos reproducibles que convierten a un agente promedio en una agencia de 7 cifras.
 
 ### X / Twitter (bio)
-> Architect of life insurance agencies. Blueprints over hype. Building the next generation of $1M producers. *El Plano™*
+> El Arquitecto · Diseño agencias de seguros de vida. Plano = Sistema. 0 hype.
 
 ---
 
-## 8. El Manifesto (post #1 cuando relances las cuentas)
+## 8. El Manifesto (post de lanzamiento — primer contenido en TODAS las plataformas)
 
-> **Para todos los agentes de seguros de vida que están cansados del hype.**
+> **Para los agentes latinos de seguros de vida que ya están cansados del hype.**
 >
-> Este nicho está roto.
+> Este nicho en español está roto.
 >
-> Está lleno de gritones con cadenas de oro vendiéndote cursos de "mindset" mientras tu cuenta sigue en cero.
+> Está lleno de coaches con cadena de oro y carros prestados gritándote que "manifiestes la abundancia" mientras tu cuenta de banco sigue en cero.
 >
 > Yo no soy uno de ellos.
 >
-> Yo soy El Arquitecto.
+> Yo soy **Steven Suarez. El Arquitecto.**
 >
-> Y vine a hacer una sola cosa: enseñarte a construir una agencia con plano, no con suerte.
+> Y vine a hacer una sola cosa:
+>
+> Enseñarte a **construir una agencia con plano, no con suerte.**
+>
+> Plano = sistema. Sistema = la diferencia entre un agente que sobrevive y un agente que construye un imperio.
+>
+> Aquí no se grita.
+> Aquí se dibuja.
 >
 > Si quieres seguir scrolleando reels de motivación, este no es tu lugar.
 >
 > Si quieres el plano, quédate.
 >
-> Empezamos.
+> Empezamos hoy.
 
 ---
 
